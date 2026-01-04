@@ -29,7 +29,6 @@ class SearchPresenter(
     @Assisted private val screen: SearchScreen,
     private val iTunesClient: ITunesClient,
 ) : Presenter<SearchScreen.State> {
-
     @CircuitInject(screen = SearchScreen::class, scope = AppScope::class)
     @AssistedFactory
     fun interface Factory {
@@ -40,13 +39,14 @@ class SearchPresenter(
     override fun present(): SearchScreen.State {
         val scope = rememberRetainedCoroutineScope()
 
-        val provider = rememberRetained(screen, scope, iTunesClient) {
-            SearchStateProvider(
-                initialQuery = screen.initialQuery,
-                iTunesClient = iTunesClient,
-                scope = scope
-            )
-        }
+        val provider =
+            rememberRetained(screen, scope, iTunesClient) {
+                SearchStateProvider(
+                    initialQuery = screen.initialQuery,
+                    iTunesClient = iTunesClient,
+                    scope = scope,
+                )
+            }
 
         return provider.state
     }
@@ -56,7 +56,7 @@ class SearchPresenter(
 private class SearchStateProvider(
     initialQuery: String,
     private val iTunesClient: ITunesClient,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
 ) {
     private var query by mutableStateOf(initialQuery)
     private val results = mutableStateListOf<ITunesResult>()
@@ -72,16 +72,13 @@ private class SearchStateProvider(
     val state: SearchScreen.State
         get() {
             return if (query.isBlank() && results.isEmpty()) {
-                SearchScreen.State.Empty(
-                    query = query,
-                    eventSink = ::handleEvent
-                )
+                SearchScreen.State.Empty(query = query, eventSink = ::handleEvent)
             } else {
                 SearchScreen.State.Loaded(
                     query = query,
                     results = results.toList(),
                     isSearching = isSearching,
-                    eventSink = ::handleEvent
+                    eventSink = ::handleEvent,
                 )
             }
         }
@@ -92,11 +89,13 @@ private class SearchStateProvider(
                 query = event.query
                 debouncedSearch()
             }
+
             SearchScreen.Event.Search -> performSearch()
             SearchScreen.Event.ClearQuery -> {
                 query = ""
                 results.clear()
             }
+
             is SearchScreen.Event.ClickResult -> {
                 // Handle result click if needed
             }
@@ -105,10 +104,11 @@ private class SearchStateProvider(
 
     private fun debouncedSearch() {
         searchJob?.cancel()
-        searchJob = scope.launch {
-            delay(SEARCH_DEBOUNCE_MS)
-            performSearch()
-        }
+        searchJob =
+            scope.launch {
+                delay(SEARCH_DEBOUNCE_MS)
+                performSearch()
+            }
     }
 
     private fun performSearch() {
@@ -119,21 +119,23 @@ private class SearchStateProvider(
         }
 
         searchJob?.cancel()
-        searchJob = scope.launch {
-            isSearching = true
-            Timber.d("Searching for: $query")
-            iTunesClient.search(query)
-                .onSuccess { response ->
-                    Timber.d("Found ${response.resultCount} results")
-                    results.clear()
-                    results.addAll(response.results)
-                }
-                .onFailure { error ->
-                    Timber.e(error, "Search failed for: $query")
-                    // Still clear results on failure to be safe? 
-                    // Or keep old results. Let's keep old ones but maybe show toast.
-                }
-            isSearching = false
-        }
+        searchJob =
+            scope.launch {
+                isSearching = true
+                Timber.d("Searching for: $query")
+                iTunesClient
+                    .search(query)
+                    .onSuccess { response ->
+                        Timber.d("Found ${response.resultCount} results")
+                        results.clear()
+                        results.addAll(response.results)
+                    }
+                    .onFailure { error ->
+                        Timber.e(error, "Search failed for: $query")
+                        // Still clear results on failure to be safe?
+                        // Or keep old results. Let's keep old ones but maybe show toast.
+                    }
+                isSearching = false
+            }
     }
 }

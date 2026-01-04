@@ -11,6 +11,7 @@ A modern Android application template leveraging the latest Jetpack Compose feat
 - **Paparazzi**: Screen-testing at your fingertips.
 - **Kotlin Serialization**: Type-safe JSON parsing.
 - **DataStore**: Modern data storage solution.
+- **Spotless**: Consistent code formatting for Kotlin, Gradle, and XML.
 
 ## Getting Started
 

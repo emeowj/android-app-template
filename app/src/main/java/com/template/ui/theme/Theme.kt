@@ -12,16 +12,13 @@ import androidx.compose.ui.unit.dp
 private val DarkColorScheme = darkColorScheme()
 
 @Composable
-fun TemplateTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
+fun TemplateTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val colorScheme = if (darkTheme) DarkColorScheme else expressiveLightColorScheme()
 
     MaterialExpressiveTheme(
         colorScheme = colorScheme,
         typography = AppTypography,
-        content = content
+        content = content,
     )
 }
 
@@ -30,26 +27,29 @@ object AppShape {
     val smallRadius = Padding.small
 
     val listFull = RoundedCornerShape(size = largeRadius)
-    val listTop = RoundedCornerShape(
-        topStart = largeRadius,
-        topEnd = largeRadius,
-        bottomStart = smallRadius,
-        bottomEnd = smallRadius
-    )
+    val listTop =
+        RoundedCornerShape(
+            topStart = largeRadius,
+            topEnd = largeRadius,
+            bottomStart = smallRadius,
+            bottomEnd = smallRadius,
+        )
     val listMiddle = RoundedCornerShape(size = smallRadius)
-    val listBottom = RoundedCornerShape(
-        topStart = smallRadius,
-        topEnd = smallRadius,
-        bottomStart = largeRadius,
-        bottomEnd = largeRadius,
-    )
+    val listBottom =
+        RoundedCornerShape(
+            topStart = smallRadius,
+            topEnd = smallRadius,
+            bottomStart = largeRadius,
+            bottomEnd = largeRadius,
+        )
 
-    fun calculateListShape(index: Int, size: Int): Shape = when {
-        size == 1 -> listFull
-        index == 0 -> listTop
-        index == size - 1 -> listBottom
-        else -> listMiddle
-    }
+    fun calculateListShape(index: Int, size: Int): Shape =
+        when {
+            size == 1 -> listFull
+            index == 0 -> listTop
+            index == size - 1 -> listBottom
+            else -> listMiddle
+        }
 }
 
 object Padding {

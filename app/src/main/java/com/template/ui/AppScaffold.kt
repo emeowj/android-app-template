@@ -45,47 +45,47 @@ enum class NavigationTab(
     val labelRes: Int,
     val icon: Int,
     val iconFilled: Int,
-    val screen: Screen
+    val screen: Screen,
 ) {
     Home(
         labelRes = R.string.nav_home,
         icon = R.drawable.ic_home,
         iconFilled = R.drawable.ic_home_filled,
-        screen = HomeScreen
+        screen = HomeScreen,
     ),
     Search(
         labelRes = R.string.nav_search,
         icon = R.drawable.ic_search,
         iconFilled = R.drawable.ic_search_filled,
-        screen = SearchScreen()
+        screen = SearchScreen(),
     ),
 }
 
 @Composable
-fun AppScaffold(
-    circuit: Circuit,
-    modifier: Modifier = Modifier
-) {
+fun AppScaffold(circuit: Circuit, modifier: Modifier = Modifier) {
     CircuitCompositionLocals(circuit) {
         val hapticFeedbackEnabled by rememberPreference(HapticFeedbackEnabledKey, true)
         WithHapticFeedbackManager(enabled = hapticFeedbackEnabled) {
             val backStack = rememberSaveableBackStack(root = HomeScreen)
             val baseNavigator = rememberCircuitNavigator(backStack, enableBackHandler = true)
             val hapticManager = LocalHapticFeedbackManager.current
-            val eventListeners = remember(hapticManager) {
-                persistentListOf(HapticNavigationEventListener(hapticManager))
-            }
-            val navigator = rememberInterceptingNavigator(
-                navigator = baseNavigator,
-                eventListeners = eventListeners
-            )
-
-            val selectedTab by remember(backStack) {
-                derivedStateOf {
-                    val top = backStack.topRecord?.screen
-                    NavigationTab.entries.firstOrNull { it.screen == top }
+            val eventListeners =
+                remember(hapticManager) {
+                    persistentListOf(HapticNavigationEventListener(hapticManager))
                 }
-            }
+            val navigator =
+                rememberInterceptingNavigator(
+                    navigator = baseNavigator,
+                    eventListeners = eventListeners,
+                )
+
+            val selectedTab by
+                remember(backStack) {
+                    derivedStateOf {
+                        val top = backStack.topRecord?.screen
+                        NavigationTab.entries.firstOrNull { it.screen == top }
+                    }
+                }
 
             ContentWithOverlays {
                 Scaffold(
@@ -94,20 +94,17 @@ fun AppScaffold(
                         AnimatedVisibility(
                             visible = selectedTab != null,
                             enter = slideInVertically { it } + fadeIn(),
-                            exit = slideOutVertically { it } + fadeOut()
+                            exit = slideOutVertically { it } + fadeOut(),
                         ) {
-                            BottomNavBar(
-                                selectedTab = selectedTab,
-                                navigator = navigator
-                            )
+                            BottomNavBar(selectedTab = selectedTab, navigator = navigator)
                         }
                     },
-                    contentWindowInsets = WindowInsets(0)
+                    contentWindowInsets = WindowInsets(0),
                 ) { padding ->
                     NavigableCircuitContent(
                         navigator = navigator,
                         backStack = backStack,
-                        modifier = Modifier.padding(padding)
+                        modifier = Modifier.padding(padding),
                     )
                 }
             }
@@ -119,7 +116,7 @@ fun AppScaffold(
 private fun BottomNavBar(
     selectedTab: NavigationTab?,
     navigator: Navigator,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val hapticManager = LocalHapticFeedbackManager.current
     ShortNavigationBar(modifier = modifier) {
@@ -136,10 +133,10 @@ private fun BottomNavBar(
                 icon = {
                     Icon(
                         painter = painterResource(if (selected) tab.iconFilled else tab.icon),
-                        contentDescription = stringResource(tab.labelRes)
+                        contentDescription = stringResource(tab.labelRes),
                     )
                 },
-                label = null
+                label = null,
             )
         }
     }
@@ -148,7 +145,5 @@ private fun BottomNavBar(
 @Previews
 @Composable
 private fun AppScaffoldPreview() {
-    AppPreview {
-        AppScaffold(circuit = PreviewCircuit)
-    }
+    AppPreview { AppScaffold(circuit = PreviewCircuit) }
 }

@@ -9,15 +9,11 @@ import org.junit.Test
 
 class ExamplePaparazziTest {
     @get:Rule
-    val paparazzi = Paparazzi(
-        deviceConfig = PIXEL_5,
-        theme = "android:Theme.Material.Light.NoActionBar"
-    )
+    val paparazzi =
+        Paparazzi(deviceConfig = PIXEL_5, theme = "android:Theme.Material.Light.NoActionBar")
 
     @Test
     fun snapshotHomeScreen() {
-        paparazzi.snapshot {
-            HomeUi(state = HomeScreen.State {})
-        }
+        paparazzi.snapshot { HomeUi(state = HomeScreen.State {}) }
     }
 }

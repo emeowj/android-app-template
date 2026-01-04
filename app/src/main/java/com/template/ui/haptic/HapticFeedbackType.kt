@@ -6,5 +6,5 @@ enum class HapticFeedbackType {
     ScrollToTop,
     Action,
     RefreshThreshold,
-    Selection
+    Selection,
 }

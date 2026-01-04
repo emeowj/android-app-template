@@ -10,18 +10,13 @@ val HapticFeedbackEnabledKey = booleanPreferencesKey("hapticFeedbackEnabled")
 enum class DarkMode {
     SYSTEM,
     LIGHT,
-    DARK
+    DARK,
 }
 
-class EnumPreferencesKey<T : Enum<T>>(
-    val key: Preferences.Key<String>,
-    val defaultValue: T
-)
+class EnumPreferencesKey<T : Enum<T>>(val key: Preferences.Key<String>, val defaultValue: T)
 
 inline fun <reified T : Enum<T>> enumPreferencesKey(
     name: String,
-    defaultValue: T
-): EnumPreferencesKey<T> = EnumPreferencesKey(
-    key = stringPreferencesKey(name),
-    defaultValue = defaultValue
-)
+    defaultValue: T,
+): EnumPreferencesKey<T> =
+    EnumPreferencesKey(key = stringPreferencesKey(name), defaultValue = defaultValue)

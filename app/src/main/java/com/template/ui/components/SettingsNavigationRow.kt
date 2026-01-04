@@ -22,9 +22,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.template.R
-import com.template.ui.theme.Padding
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
+import com.template.ui.theme.Padding
 
 @Composable
 fun SettingsNavigationRow(
@@ -35,39 +35,37 @@ fun SettingsNavigationRow(
     description: String? = null,
     titleColor: Color = MaterialTheme.colorScheme.onSurface,
     shape: Shape = androidx.compose.ui.graphics.RectangleShape,
-    showChevron: Boolean = true
+    showChevron: Boolean = true,
 ) {
     Surface(modifier = modifier, onClick = onClick, shape = shape) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(min = 64.dp)
-                .padding(horizontal = Padding.medium, vertical = Padding.small),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier.fillMaxWidth()
+                    .heightIn(min = 64.dp)
+                    .padding(horizontal = Padding.medium, vertical = Padding.small),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             if (icon != null) {
                 Icon(
                     painter = icon,
                     contentDescription = null,
                     modifier = Modifier.size(24.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Spacer(modifier = Modifier.width(Padding.medium))
             }
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium,
-                    color = titleColor
+                    color = titleColor,
                 )
                 if (description != null) {
                     Text(
                         text = description,
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
             }
@@ -75,7 +73,7 @@ fun SettingsNavigationRow(
                 Icon(
                     painter = painterResource(R.drawable.ic_chevron_right),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -91,7 +89,7 @@ private fun SettingsNavigationRowPreview() {
                 title = "Navigation Title",
                 description = "Navigation Description",
                 icon = painterResource(R.drawable.ic_palette),
-                onClick = {}
+                onClick = {},
             )
         }
     }

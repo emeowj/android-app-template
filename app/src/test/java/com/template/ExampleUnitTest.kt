@@ -1,7 +1,7 @@
 package com.template
 
+import org.junit.Assert.assertEquals
 import org.junit.Test
-import org.junit.Assert.*
 
 class ExampleUnitTest {
     @Test

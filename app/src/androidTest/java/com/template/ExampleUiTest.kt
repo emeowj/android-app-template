@@ -9,16 +9,11 @@ import org.junit.Rule
 import org.junit.Test
 
 class ExampleUiTest {
-    @get:Rule
-    val composeTestRule = createComposeRule()
+    @get:Rule val composeTestRule = createComposeRule()
 
     @Test
     fun homeScreenDisplaysText() {
-        composeTestRule.setContent {
-            TemplateTheme {
-                HomeUi(state = HomeScreen.State {})
-            }
-        }
+        composeTestRule.setContent { TemplateTheme { HomeUi(state = HomeScreen.State {}) } }
 
         composeTestRule.onNodeWithText("Home Screen").assertExists()
     }

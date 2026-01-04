@@ -27,9 +27,8 @@ import org.junit.Test
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
-class MainDispatcherRule(
-    val testDispatcher: TestDispatcher = UnconfinedTestDispatcher(),
-) : TestWatcher() {
+class MainDispatcherRule(val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()) :
+    TestWatcher() {
     override fun starting(description: Description) {
         Dispatchers.setMain(testDispatcher)
     }
@@ -40,9 +39,7 @@ class MainDispatcherRule(
 }
 
 class SearchPresenterTest {
-
-    @get:Rule
-    val mainDispatcherRule = MainDispatcherRule()
+    @get:Rule val mainDispatcherRule = MainDispatcherRule()
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -50,7 +47,7 @@ class SearchPresenterTest {
     fun `initial state is empty`() = runTest {
         val client = createMockClient(ITunesSearchResponse(0, emptyList()))
         val presenter = SearchPresenter(SearchScreen(), client)
-        
+
         presenter.test {
             val state = awaitItem()
             assertTrue(state is SearchScreen.State.Empty)
@@ -60,29 +57,30 @@ class SearchPresenterTest {
 
     @Test
     fun `search updates results`() = runTest {
-        val results = listOf(
-            ITunesResult(
-                trackId = 1,
-                artistName = "Artist",
-                trackName = "Track",
-                wrapperType = "track"
+        val results =
+            listOf(
+                ITunesResult(
+                    trackId = 1,
+                    artistName = "Artist",
+                    trackName = "Track",
+                    wrapperType = "track",
+                )
             )
-        )
         val client = createMockClient(ITunesSearchResponse(1, results))
         val presenter = SearchPresenter(SearchScreen(), client)
 
         presenter.test {
             val initialState = awaitItem()
             initialState.eventSink(SearchScreen.Event.UpdateQuery("test"))
-            
+
             // 1. Query update state
             val stateAfterQueryUpdate = awaitItem()
             assertEquals("test", stateAfterQueryUpdate.query)
-            
+
             // 2. Searching state (after debounce)
             val searchingState = awaitItem()
             assertTrue(searchingState is SearchScreen.State.Loaded && searchingState.isSearching)
-            
+
             // 3. Results loaded state
             val loadedState = awaitItem()
             assertTrue(loadedState is SearchScreen.State.Loaded)
@@ -99,33 +97,37 @@ class SearchPresenterTest {
         val mockEngine = MockEngine { _ ->
             respond(
                 content = jsonString,
-                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                headers =
+                    headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
             )
         }
-        val httpClient = HttpClient(mockEngine) {
-            install(ContentNegotiation) {
-                json(Json {
-                    ignoreUnknownKeys = true
-                    isLenient = true
-                    coerceInputValues = true
-                })
+        val httpClient =
+            HttpClient(mockEngine) {
+                install(ContentNegotiation) {
+                    json(
+                        Json {
+                            ignoreUnknownKeys = true
+                            isLenient = true
+                            coerceInputValues = true
+                        }
+                    )
+                }
             }
-        }
         val client = ITunesClient(httpClient)
         val presenter = SearchPresenter(SearchScreen(), client)
 
         presenter.test {
             val initialState = awaitItem()
             initialState.eventSink(SearchScreen.Event.UpdateQuery("raye"))
-            
+
             // 1. Query update state
             val stateAfterQueryUpdate = awaitItem()
             assertEquals("raye", stateAfterQueryUpdate.query)
-            
+
             // 2. Searching state
             val searchingState = awaitItem()
             assertTrue(searchingState is SearchScreen.State.Loaded && searchingState.isSearching)
-            
+
             // 3. Results loaded state
             val loadedState = awaitItem()
             assertTrue(loadedState is SearchScreen.State.Loaded)
@@ -141,14 +143,11 @@ class SearchPresenterTest {
         val mockEngine = MockEngine { _ ->
             respond(
                 content = json.encodeToString(response),
-                headers = headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString())
+                headers =
+                    headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
             )
         }
-        val httpClient = HttpClient(mockEngine) {
-            install(ContentNegotiation) {
-                json(json)
-            }
-        }
+        val httpClient = HttpClient(mockEngine) { install(ContentNegotiation) { json(json) } }
         return ITunesClient(httpClient)
     }
 }

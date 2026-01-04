@@ -22,30 +22,31 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val darkMode by rememberEnumPreference<DarkMode>(DarkModeKey)
-            val isDarkTheme = when (darkMode) {
-                DarkMode.SYSTEM -> isSystemInDarkTheme()
-                DarkMode.LIGHT -> false
-                DarkMode.DARK -> true
-            }
+            val isDarkTheme =
+                when (darkMode) {
+                    DarkMode.SYSTEM -> isSystemInDarkTheme()
+                    DarkMode.LIGHT -> false
+                    DarkMode.DARK -> true
+                }
 
             LaunchedEffect(isDarkTheme) {
                 enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.auto(
-                        Color.TRANSPARENT,
-                        Color.TRANSPARENT,
-                        detectDarkMode = { isDarkTheme }
-                    ),
-                    navigationBarStyle = SystemBarStyle.auto(
-                        DefaultLightScrim,
-                        DefaultDarkScrim,
-                        detectDarkMode = { isDarkTheme }
-                    ),
+                    statusBarStyle =
+                        SystemBarStyle.auto(
+                            Color.TRANSPARENT,
+                            Color.TRANSPARENT,
+                            detectDarkMode = { isDarkTheme },
+                        ),
+                    navigationBarStyle =
+                        SystemBarStyle.auto(
+                            DefaultLightScrim,
+                            DefaultDarkScrim,
+                            detectDarkMode = { isDarkTheme },
+                        ),
                 )
             }
 
-            TemplateTheme(darkTheme = isDarkTheme) {
-                AppScaffold(circuit = appGraph.circuit)
-            }
+            TemplateTheme(darkTheme = isDarkTheme) { AppScaffold(circuit = appGraph.circuit) }
         }
     }
 

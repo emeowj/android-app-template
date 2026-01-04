@@ -1,8 +1,8 @@
 package com.template
 
 import android.app.Application
-import dev.zacsweers.metro.createGraphFactory
 import com.template.di.AppGraph
+import dev.zacsweers.metro.createGraphFactory
 import timber.log.Timber
 
 class TemplateApplication : Application() {

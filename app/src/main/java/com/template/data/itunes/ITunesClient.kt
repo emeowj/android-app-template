@@ -14,12 +14,14 @@ class ITunesClient(private val httpClient: HttpClient) {
     suspend fun search(
         term: String,
         media: String = "music",
-        limit: Int = 50
+        limit: Int = 50,
     ): Result<ITunesSearchResponse> = runCatching {
-        httpClient.get("https://itunes.apple.com/search") {
-            parameter("term", term)
-            parameter("media", media)
-            parameter("limit", limit)
-        }.body()
+        httpClient
+            .get("https://itunes.apple.com/search") {
+                parameter("term", term)
+                parameter("media", media)
+                parameter("limit", limit)
+            }
+            .body()
     }
 }

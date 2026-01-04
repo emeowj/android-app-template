@@ -29,8 +29,7 @@ import timber.log.Timber
 interface AppGraph {
     val circuit: Circuit
 
-    @Provides
-    fun provideApplicationContext(application: Application): Context = application
+    @Provides fun provideApplicationContext(application: Application): Context = application
 
     @Provides
     @SingleIn(AppScope::class)
@@ -42,40 +41,38 @@ interface AppGraph {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideHttpClient(json: Json): HttpClient = HttpClient(OkHttp) {
-        install(Logging) {
-            logger = object : Logger {
-                override fun log(message: String) {
-                    Timber.tag("TemplateHttp").d(message)
-                }
+    fun provideHttpClient(json: Json): HttpClient =
+        HttpClient(OkHttp) {
+            install(Logging) {
+                logger =
+                    object : Logger {
+                        override fun log(message: String) {
+                            Timber.tag("TemplateHttp").d(message)
+                        }
+                    }
+                level = LogLevel.INFO
             }
-            level = LogLevel.INFO
+            install(ContentNegotiation) {
+                json(json, contentType = ContentType.Application.Json)
+                json(json, contentType = ContentType.Text.JavaScript)
+            }
         }
-        install(ContentNegotiation) {
-            json(json, contentType = ContentType.Application.Json)
-            json(json, contentType = ContentType.Text.JavaScript)
-        }
-    }
 
     @Provides
     @SingleIn(AppScope::class)
     fun provideCircuit(
         presenterFactories: Set<@JvmSuppressWildcards Presenter.Factory>,
-        uiFactories: Set<@JvmSuppressWildcards Ui.Factory>
-    ): Circuit = Circuit.Builder()
-        .addPresenterFactories(presenterFactories)
-        .addUiFactories(uiFactories)
-        .setOnUnavailableContent { screen, modifier ->
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = "Missing Circuit content for ${screen::class.simpleName}"
-                )
+        uiFactories: Set<@JvmSuppressWildcards Ui.Factory>,
+    ): Circuit =
+        Circuit.Builder()
+            .addPresenterFactories(presenterFactories)
+            .addUiFactories(uiFactories)
+            .setOnUnavailableContent { screen, modifier ->
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(text = "Missing Circuit content for ${screen::class.simpleName}")
+                }
             }
-        }
-        .build()
+            .build()
 
     @DependencyGraph.Factory
     fun interface Factory {

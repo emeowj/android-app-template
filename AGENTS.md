@@ -9,6 +9,8 @@ Android app template built with Jetpack Compose, Circuit (navigation/state), and
 ./gradlew test                        # Run all unit tests
 ./gradlew :app:testDebugUnitTest      # Run app unit tests
 ./gradlew lint                        # Run linting
+./gradlew spotlessCheck               # Check code formatting
+./gradlew spotlessApply               # Apply code formatting
 ```
 
 ## Paparazzi (Screenshot Testing)
@@ -27,3 +29,4 @@ Android app template built with Jetpack Compose, Circuit (navigation/state), and
 - **Commit Messages**: Use prefixes like `feature:`, `fix:`, `chore:`, `refactor:`.
 - **Composable Previews**: Always add `@Preview` annotated functions for new composables.
 - **DI**: Use Metro for dependency injection.
+- **Formatting**: Always run `./gradlew spotlessApply` before submitting changes to ensure consistent code style.

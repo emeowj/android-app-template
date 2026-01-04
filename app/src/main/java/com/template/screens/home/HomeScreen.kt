@@ -31,9 +31,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data object HomeScreen : Screen {
-    data class State(
-        val eventSink: (Event) -> Unit
-    ) : CircuitUiState
+    data class State(val eventSink: (Event) -> Unit) : CircuitUiState
 
     sealed interface Event : CircuitUiEvent {
         data object ClickSettings : Event
@@ -41,17 +39,14 @@ data object HomeScreen : Screen {
 }
 
 @CircuitInject(HomeScreen::class, AppScope::class)
-class HomePresenter(
-    private val navigator: Navigator
-) : Presenter<HomeScreen.State> {
+class HomePresenter(private val navigator: Navigator) : Presenter<HomeScreen.State> {
     @Composable
-    override fun present(): HomeScreen.State {
-        return HomeScreen.State { event ->
+    override fun present(): HomeScreen.State =
+        HomeScreen.State { event ->
             when (event) {
                 HomeScreen.Event.ClickSettings -> navigator.goTo(SettingsScreen)
             }
         }
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -67,22 +62,21 @@ fun HomeUi(state: HomeScreen.State, modifier: Modifier = Modifier) {
                     IconButton(onClick = { state.eventSink(HomeScreen.Event.ClickSettings) }) {
                         Icon(
                             painter = painterResource(R.drawable.ic_settings),
-                            contentDescription = stringResource(R.string.nav_settings)
+                            contentDescription = stringResource(R.string.nav_settings),
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ),
             )
         },
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
     ) { padding ->
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentAlignment = Alignment.Center,
         ) {
             Text(text = stringResource(R.string.home_screen_text))
         }
@@ -92,7 +86,5 @@ fun HomeUi(state: HomeScreen.State, modifier: Modifier = Modifier) {
 @Composable
 @ThemePreviews
 private fun HomePreview() {
-    AppPreview {
-        HomeUi(state = HomeScreen.State { })
-    }
+    AppPreview { HomeUi(state = HomeScreen.State {}) }
 }

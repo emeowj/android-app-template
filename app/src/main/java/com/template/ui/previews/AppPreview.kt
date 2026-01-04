@@ -7,10 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
@@ -25,29 +22,24 @@ fun AppPreview(content: @Composable () -> Unit) {
     TemplateTheme {
         val backStack = rememberSaveableBackStack(root = HomeScreen)
         val navigator = rememberCircuitNavigator(backStack = backStack)
-        
+
         Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
-            CircuitCompositionLocals(circuit = PreviewCircuit) {
-                ContentWithOverlays {
-                    content()
-                }
-            }
+            CircuitCompositionLocals(circuit = PreviewCircuit) { ContentWithOverlays { content() } }
         }
     }
 }
 
-val PreviewCircuit = Circuit.Builder()
-    .setOnUnavailableContent { screen, modifier ->
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(32.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "Preview placeholder for ${screen::class.simpleName}",
-                style = MaterialTheme.typography.titleMedium
-            )
+val PreviewCircuit =
+    Circuit.Builder()
+        .setOnUnavailableContent { screen, modifier ->
+            Box(
+                modifier = modifier.fillMaxSize().padding(32.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "Preview placeholder for ${screen::class.simpleName}",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
         }
-    }
-    .build()
+        .build()

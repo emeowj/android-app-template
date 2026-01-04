@@ -97,7 +97,7 @@ dependencies {
     implementation(libs.kotlinx.datetime)
 
     ksp(libs.circuit.codegen)
-    
+
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)

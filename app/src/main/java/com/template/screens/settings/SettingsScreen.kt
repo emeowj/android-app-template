@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,8 +38,7 @@ import dev.zacsweers.metro.AppScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
-@Parcelize
-data object SettingsScreen : StaticScreen
+@Parcelize data object SettingsScreen : StaticScreen
 
 @CircuitInject(SettingsScreen::class, AppScope::class)
 @Composable
@@ -50,11 +48,12 @@ fun SettingsUi(modifier: Modifier = Modifier) {
     val overlayHost = LocalOverlayHost.current
     val scope = rememberCoroutineScope()
 
-    val darkModeOptions = listOf(
-        ChoiceOption(DarkMode.SYSTEM, stringResource(R.string.settings_dark_mode_system)),
-        ChoiceOption(DarkMode.LIGHT, stringResource(R.string.settings_dark_mode_light)),
-        ChoiceOption(DarkMode.DARK, stringResource(R.string.settings_dark_mode_dark))
-    )
+    val darkModeOptions =
+        listOf(
+            ChoiceOption(DarkMode.SYSTEM, stringResource(R.string.settings_dark_mode_system)),
+            ChoiceOption(DarkMode.LIGHT, stringResource(R.string.settings_dark_mode_light)),
+            ChoiceOption(DarkMode.DARK, stringResource(R.string.settings_dark_mode_dark)),
+        )
     val darkModeLabel = darkModeOptions.find { it.value == darkMode }?.label ?: ""
 
     Scaffold(
@@ -64,24 +63,19 @@ fun SettingsUi(modifier: Modifier = Modifier) {
                 title = {
                     Text(
                         text = stringResource(R.string.settings_title),
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                 },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
+                colors =
+                    TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    ),
             )
         },
-        containerColor = MaterialTheme.colorScheme.surfaceContainer
+        containerColor = MaterialTheme.colorScheme.surfaceContainer,
     ) { paddingValues ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            item {
-                SectionHeader(title = stringResource(R.string.settings_appearance_section))
-            }
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            item { SectionHeader(title = stringResource(R.string.settings_appearance_section)) }
 
             item {
                 SettingsNavigationRow(
@@ -90,13 +84,14 @@ fun SettingsUi(modifier: Modifier = Modifier) {
                     icon = painterResource(R.drawable.ic_palette),
                     onClick = {
                         scope.launch {
-                            val result = overlayHost.show(
-                                selectionSheetOverlay(
-                                    titleRes = R.string.settings_dark_mode_title,
-                                    options = darkModeOptions,
-                                    selected = darkMode
+                            val result =
+                                overlayHost.show(
+                                    selectionSheetOverlay(
+                                        titleRes = R.string.settings_dark_mode_title,
+                                        options = darkModeOptions,
+                                        selected = darkMode,
+                                    )
                                 )
-                            )
                             if (result is SelectionResult.Selected) {
                                 darkMode = result.value
                             }
@@ -104,14 +99,14 @@ fun SettingsUi(modifier: Modifier = Modifier) {
                     },
                     modifier = Modifier.padding(horizontal = Padding.medium),
                     shape = MaterialTheme.shapes.medium,
-                    showChevron = false
+                    showChevron = false,
                 )
             }
 
             item {
                 SectionHeader(
                     title = stringResource(R.string.settings_behavior_section),
-                    modifier = Modifier.padding(top = Padding.medium)
+                    modifier = Modifier.padding(top = Padding.medium),
                 )
             }
 
@@ -122,7 +117,7 @@ fun SettingsUi(modifier: Modifier = Modifier) {
                     onCheckedChange = { hapticFeedbackEnabled = it },
                     icon = painterResource(R.drawable.ic_vibration),
                     modifier = Modifier.padding(horizontal = Padding.medium),
-                    shape = MaterialTheme.shapes.medium
+                    shape = MaterialTheme.shapes.medium,
                 )
             }
         }
@@ -132,7 +127,5 @@ fun SettingsUi(modifier: Modifier = Modifier) {
 @Composable
 @ThemePreviews
 private fun SettingsPreview() {
-    AppPreview {
-        SettingsUi()
-    }
+    AppPreview { SettingsUi() }
 }
