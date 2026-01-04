@@ -2,24 +2,23 @@ package com.template.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.expressiveLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 
 private val DarkColorScheme = darkColorScheme()
-private val LightColorScheme = lightColorScheme()
 
 @Composable
 fun TemplateTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val colorScheme = if (darkTheme) DarkColorScheme else expressiveLightColorScheme()
 
-    MaterialTheme(
+    MaterialExpressiveTheme(
         colorScheme = colorScheme,
         typography = AppTypography,
         content = content
@@ -27,8 +26,8 @@ fun TemplateTheme(
 }
 
 object AppShape {
-    private val largeRadius = Padding.large
-    private val smallRadius = Padding.small
+    val largeRadius = Padding.large
+    val smallRadius = Padding.small
 
     val listFull = RoundedCornerShape(size = largeRadius)
     val listTop = RoundedCornerShape(

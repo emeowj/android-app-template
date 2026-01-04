@@ -55,6 +55,7 @@ kotlin {
                 "androidx.compose.material3.ExperimentalMaterial3Api",
                 "androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
                 "androidx.compose.ui.text.ExperimentalTextApi",
+                "kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "kotlin.time.ExperimentalTime",
             )
         )
@@ -98,6 +99,10 @@ dependencies {
     ksp(libs.circuit.codegen)
     
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.turbine)
+    testImplementation(libs.circuit.test)
+    testImplementation(libs.ktor.client.mock)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

@@ -20,6 +20,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logger
 import io.ktor.client.plugins.logging.Logging
+import io.ktor.http.ContentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import timber.log.Timber
@@ -27,8 +28,6 @@ import timber.log.Timber
 @DependencyGraph(AppScope::class)
 interface AppGraph {
     val circuit: Circuit
-    val json: Json
-    val httpClient: HttpClient
 
     @Provides
     fun provideApplicationContext(application: Application): Context = application
@@ -53,7 +52,8 @@ interface AppGraph {
             level = LogLevel.INFO
         }
         install(ContentNegotiation) {
-            json(json)
+            json(json, contentType = ContentType.Application.Json)
+            json(json, contentType = ContentType.Text.JavaScript)
         }
     }
 

@@ -28,6 +28,7 @@ import com.slack.circuit.runtime.Navigator
 import com.slack.circuit.runtime.screen.Screen
 import com.template.R
 import com.template.screens.home.HomeScreen
+import com.template.screens.search.SearchScreen
 import com.template.screens.settings.SettingsScreen
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.PreviewCircuit
@@ -44,6 +45,12 @@ enum class NavigationTab(
         icon = R.drawable.ic_home,
         iconFilled = R.drawable.ic_home_filled,
         screen = HomeScreen
+    ),
+    Search(
+        labelRes = R.string.nav_search,
+        icon = R.drawable.ic_search,
+        iconFilled = R.drawable.ic_search_filled,
+        screen = SearchScreen()
     ),
     Settings(
         labelRes = R.string.nav_settings,

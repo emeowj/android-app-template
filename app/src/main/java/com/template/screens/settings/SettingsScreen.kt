@@ -39,7 +39,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data object SettingsScreen : StaticScreen
 
-@OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(SettingsScreen::class, AppScope::class)
 @Composable
 fun SettingsUi(modifier: Modifier = Modifier) {

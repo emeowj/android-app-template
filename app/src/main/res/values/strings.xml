@@ -4,6 +4,7 @@
     
     <!-- Navigation -->
     <string name="nav_home">Home</string>
+    <string name="nav_search">Search</string>
     <string name="nav_settings">Settings</string>
 
     <!-- Home Screen -->
@@ -18,6 +19,12 @@
     <string name="settings_dark_mode_light">Light</string>
     <string name="settings_dark_mode_dark">Dark</string>
     
+    <!-- Search Screen -->
+    <string name="search_title">Search</string>
+    <string name="search_hint">Search iTunes…</string>
+    <string name="search_empty_hint">Search for music, podcasts, and more</string>
+    <string name="no_results">No results found</string>
+
     <!-- Overlays -->
     <string name="overlay_cancel">Cancel</string>
     <string name="overlay_apply">Apply</string>
