@@ -19,6 +19,9 @@
     <string name="settings_dark_mode_light">Light</string>
     <string name="settings_dark_mode_dark">Dark</string>
     
+    <string name="settings_behavior_section">Behavior</string>
+    <string name="settings_haptic_feedback_title">Haptic Feedback</string>
+    
     <!-- Search Screen -->
     <string name="search_title">Search</string>
     <string name="search_hint">Search iTunes…</string>

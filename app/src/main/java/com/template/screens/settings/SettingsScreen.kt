@@ -23,11 +23,14 @@ import com.slack.circuit.runtime.screen.StaticScreen
 import com.template.R
 import com.template.data.settings.DarkMode
 import com.template.data.settings.DarkModeKey
+import com.template.data.settings.HapticFeedbackEnabledKey
 import com.template.data.settings.rememberEnumPreference
+import com.template.data.settings.rememberPreference
 import com.template.ui.components.ChoiceOption
 import com.template.ui.components.SectionHeader
 import com.template.ui.components.SelectionResult
 import com.template.ui.components.SettingsNavigationRow
+import com.template.ui.components.SettingsToggleRow
 import com.template.ui.components.selectionSheetOverlay
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
@@ -43,6 +46,7 @@ data object SettingsScreen : StaticScreen
 @Composable
 fun SettingsUi(modifier: Modifier = Modifier) {
     var darkMode by rememberEnumPreference(DarkModeKey)
+    var hapticFeedbackEnabled by rememberPreference(HapticFeedbackEnabledKey, true)
     val overlayHost = LocalOverlayHost.current
     val scope = rememberCoroutineScope()
 
@@ -101,6 +105,24 @@ fun SettingsUi(modifier: Modifier = Modifier) {
                     modifier = Modifier.padding(horizontal = Padding.medium),
                     shape = MaterialTheme.shapes.medium,
                     showChevron = false
+                )
+            }
+
+            item {
+                SectionHeader(
+                    title = stringResource(R.string.settings_behavior_section),
+                    modifier = Modifier.padding(top = Padding.medium)
+                )
+            }
+
+            item {
+                SettingsToggleRow(
+                    title = stringResource(R.string.settings_haptic_feedback_title),
+                    checked = hapticFeedbackEnabled,
+                    onCheckedChange = { hapticFeedbackEnabled = it },
+                    icon = painterResource(R.drawable.ic_vibration),
+                    modifier = Modifier.padding(horizontal = Padding.medium),
+                    shape = MaterialTheme.shapes.medium
                 )
             }
         }

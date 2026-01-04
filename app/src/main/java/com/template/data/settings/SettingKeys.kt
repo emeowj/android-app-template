@@ -1,9 +1,11 @@
 package com.template.data.settings
 
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 val DarkModeKey = enumPreferencesKey("darkMode", DarkMode.SYSTEM)
+val HapticFeedbackEnabledKey = booleanPreferencesKey("hapticFeedbackEnabled")
 
 enum class DarkMode {
     SYSTEM,
