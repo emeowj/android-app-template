@@ -127,8 +127,23 @@ move_source_dir() {
         fi
 
         # Remove old directory structure
-        # Walk up from the old path and remove empty directories
-        rm -rf "$base_dir/com"
+        # Get the first segment of old and new paths to check if they share a root
+        local old_root="${OLD_PATH%%/*}"
+        local new_root="${NEW_PATH%%/*}"
+
+        if [ "$old_root" != "$new_root" ]; then
+            # Different root directories, safe to remove the old root entirely
+            rm -rf "$base_dir/$old_root"
+        else
+            # Same root directory, only remove the old subdirectory
+            rm -rf "$old_dir"
+            # Clean up empty parent directories (but not the shared root)
+            local parent_dir="$(dirname "$old_dir")"
+            while [ "$parent_dir" != "$base_dir/$old_root" ] && [ -d "$parent_dir" ] && [ -z "$(ls -A "$parent_dir")" ]; do
+                rmdir "$parent_dir"
+                parent_dir="$(dirname "$parent_dir")"
+            done
+        fi
 
         echo -e "${GREEN}  ✓ Moved: $OLD_PATH -> $NEW_PATH in ${base_dir#$SCRIPT_DIR/}${NC}"
     fi
