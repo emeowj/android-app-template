@@ -12,17 +12,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LoadingIndicator
@@ -39,10 +41,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
@@ -57,121 +63,84 @@ import coil3.compose.AsyncImage
 import com.slack.circuit.codegen.annotations.CircuitInject
 import com.template.R
 import com.template.data.itunes.ITunesResult
+import com.template.ui.LocalBottomBarPadding
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.Previews
 import com.template.ui.theme.AppShape
 import com.template.ui.theme.Padding
 import dev.zacsweers.metro.AppScope
 
-@OptIn(ExperimentalMaterial3Api::class)
 @CircuitInject(SearchScreen::class, AppScope::class)
 @Composable
 fun SearchUi(state: SearchScreen.State, modifier: Modifier = Modifier) {
-    val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
-
     Scaffold(
         modifier = modifier,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    val textFieldValue =
-                        remember(state.query) {
-                            mutableStateOf(
-                                TextFieldValue(
-                                    text = state.query,
-                                    selection = TextRange(state.query.length),
-                                )
-                            )
-                        }
-                    SearchTextField(
-                        value = textFieldValue.value,
-                        onValueChange = { newValue ->
-                            textFieldValue.value = newValue
-                            if (newValue.text != state.query) {
-                                state.eventSink(SearchScreen.Event.UpdateQuery(newValue.text))
-                            }
-                        },
-                        onSearch = {
-                            keyboardController?.hide()
-                            state.eventSink(SearchScreen.Event.Search)
-                        },
-                        onClear = {
-                            textFieldValue.value = TextFieldValue()
-                            state.eventSink(SearchScreen.Event.ClearQuery)
-                        },
-                        focusRequester = focusRequester,
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
-                    ),
-                contentPadding = PaddingValues(horizontal = Padding.small),
-            )
+            SearchTopbar(state = state)
         },
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
             when (state) {
-                is SearchScreen.State.Empty -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize().padding(paddingValues),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = stringResource(R.string.search_empty_hint),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                    }
-                }
+                is SearchScreen.State.Empty ->
+                    EmptyResultUi(paddingValues = paddingValues)
 
-                is SearchScreen.State.Loaded -> {
-                    if (state.results.isEmpty() && !state.isSearching) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                text = stringResource(R.string.no_results),
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                    } else {
-                        LazyColumn(
-                            modifier = Modifier.fillMaxSize().padding(horizontal = Padding.small),
-                            contentPadding = paddingValues,
-                            verticalArrangement = Arrangement.spacedBy(Padding.hairline),
-                        ) {
-                            itemsIndexed(
-                                items = state.results,
-                                key = { _, item ->
-                                    item.trackId ?: item.collectionId ?: item.hashCode()
-                                },
-                            ) { index, result ->
-                                ResultItem(
-                                    result = result,
-                                    shape = AppShape.calculateListShape(index, state.results.size),
-                                    onClick = {
-                                        state.eventSink(SearchScreen.Event.ClickResult(result))
-                                    },
-                                )
-                            }
-                        }
-                    }
-
-                    if (state.isSearching) {
-                        LoadingIndicator(
-                            modifier = Modifier.padding(paddingValues).align(Alignment.Center)
-                        )
-                    }
-                }
+                is SearchScreen.State.Loaded ->
+                    SearchResultUi(state = state, paddingValues = paddingValues)
             }
         }
     }
+}
+
+@Composable
+private fun SearchTopbar(state: SearchScreen.State) {
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val background = MaterialTheme.colorScheme.surfaceContainer
+    CenterAlignedTopAppBar(
+        title = {
+            val textFieldValue =
+                remember(state.query) {
+                    mutableStateOf(
+                        TextFieldValue(
+                            text = state.query,
+                            selection = TextRange(state.query.length),
+                        )
+                    )
+                }
+            SearchTextField(
+                value = textFieldValue.value,
+                onValueChange = { newValue ->
+                    textFieldValue.value = newValue
+                    if (newValue.text != state.query) {
+                        state.eventSink(SearchScreen.Event.UpdateQuery(newValue.text))
+                    }
+                },
+                onSearch = {
+                    keyboardController?.hide()
+                    state.eventSink(SearchScreen.Event.Search)
+                },
+                onClear = {
+                    textFieldValue.value = TextFieldValue()
+                    state.eventSink(SearchScreen.Event.ClearQuery)
+                },
+                focusRequester = focusRequester,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
+        contentPadding = PaddingValues(horizontal = Padding.small),
+        modifier = Modifier
+            .drawBehind {
+                drawRect(
+                    brush = Brush.verticalGradient(
+                        0f to background,
+                        1f to Color.Transparent
+                    )
+                )
+            }
+            .statusBarsPadding()
+    )
 }
 
 @Composable
@@ -190,7 +159,15 @@ private fun SearchTextField(
             modifier
                 .padding(horizontal = Padding.small)
                 .padding(top = Padding.extraSmall)
-                .focusRequester(focusRequester),
+                .focusRequester(focusRequester)
+                .dropShadow(
+                    shape = RoundedCornerShape(50),
+                    shadow = Shadow(
+                        radius = 4.dp,
+                        spread = 2.dp,
+                        color = MaterialTheme.colorScheme.surfaceContainer
+                    )
+                ),
         placeholder = {
             Text(
                 text = stringResource(R.string.search_hint),
@@ -232,22 +209,111 @@ private fun SearchTextField(
 }
 
 @Composable
-private fun ResultItem(result: ITunesResult, shape: Shape, onClick: () -> Unit) {
+private fun EmptyResultUi(
+    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            text = stringResource(R.string.search_empty_hint),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun SearchResultUi(
+    state: SearchScreen.State.Loaded,
+    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    if (state.results.isEmpty() && !state.isSearching) {
+        Box(
+            modifier = modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = stringResource(R.string.no_results),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    } else {
+        val listState = rememberLazyListState()
+        LazyColumn(
+            state = listState,
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = Padding.small),
+            contentPadding = paddingValues,
+            verticalArrangement = Arrangement.spacedBy(Padding.hairline),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (state.isSearching) {
+                item(key = "loading") {
+                    LoadingIndicator(modifier = Modifier.padding(Padding.medium))
+                }
+            }
+
+            itemsIndexed(
+                items = state.results,
+                key = { _, item ->
+                    item.trackId ?: item.collectionId ?: item.hashCode()
+                },
+            ) { index, result ->
+                ResultItem(
+                    result = result,
+                    shape = AppShape.calculateListShape(index, state.results.size),
+                    onClick = {
+                        state.eventSink(SearchScreen.Event.ClickResult(result))
+                    },
+                    modifier = Modifier
+                        .animateItem()
+                        .padding(top = if (index == 0) Padding.small else 0.dp)
+                )
+            }
+
+            if (state.results.isNotEmpty()) {
+                item(key = "bottom-spacer") {
+                    Spacer(modifier = Modifier.height(LocalBottomBarPadding.current))
+                }
+            }
+        }
+    }
+
+}
+
+@Composable
+private fun ResultItem(
+    result: ITunesResult,
+    shape: Shape,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+) {
     Surface(
         onClick = onClick,
         shape = shape,
         color = MaterialTheme.colorScheme.surface,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier.padding(Padding.medium).fillMaxWidth(),
+            modifier = Modifier
+                .padding(Padding.medium)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
                 model = result.artworkUrl100,
                 contentDescription = null,
                 modifier =
-                    Modifier.size(64.dp)
+                    Modifier
+                        .size(64.dp)
                         .clip(RoundedCornerShape(AppShape.largeRadius - Padding.medium))
                         .background(
                             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)

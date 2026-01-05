@@ -6,18 +6,20 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ShortNavigationBar
 import androidx.compose.material3.ShortNavigationBarItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.slack.circuit.backstack.rememberSaveableBackStack
 import com.slack.circuit.foundation.Circuit
 import com.slack.circuit.foundation.CircuitCompositionLocals
@@ -61,6 +63,8 @@ enum class NavigationTab(
     ),
 }
 
+val LocalBottomBarPadding = compositionLocalOf { 0.dp }
+
 @Composable
 fun AppScaffold(circuit: Circuit, modifier: Modifier = Modifier) {
     CircuitCompositionLocals(circuit) {
@@ -101,11 +105,11 @@ fun AppScaffold(circuit: Circuit, modifier: Modifier = Modifier) {
                     },
                     contentWindowInsets = WindowInsets(0),
                 ) { padding ->
-                    NavigableCircuitContent(
-                        navigator = navigator,
-                        backStack = backStack,
-                        modifier = Modifier.padding(padding),
-                    )
+                    CompositionLocalProvider(
+                        LocalBottomBarPadding provides padding.calculateBottomPadding()
+                    ) {
+                        NavigableCircuitContent(navigator = navigator, backStack = backStack)
+                    }
                 }
             }
         }
