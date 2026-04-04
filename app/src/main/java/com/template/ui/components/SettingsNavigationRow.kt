@@ -40,7 +40,8 @@ fun SettingsNavigationRow(
     Surface(modifier = modifier, onClick = onClick, shape = shape) {
         Row(
             modifier =
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
                     .heightIn(min = 64.dp)
                     .padding(horizontal = Padding.medium, vertical = Padding.small),
             verticalAlignment = Alignment.CenterVertically,

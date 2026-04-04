@@ -75,7 +75,9 @@ fun HomeUi(state: HomeScreen.State, modifier: Modifier = Modifier) {
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
     ) { padding ->
         Box(
-            modifier = Modifier.fillMaxSize().padding(padding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding),
             contentAlignment = Alignment.Center,
         ) {
             Text(text = stringResource(R.string.home_screen_text))

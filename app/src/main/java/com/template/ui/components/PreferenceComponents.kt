@@ -45,7 +45,8 @@ fun SettingsToggleRow(
     ) {
         Row(
             modifier =
-                Modifier.fillMaxWidth()
+                Modifier
+                    .fillMaxWidth()
                     .heightIn(min = 64.dp)
                     .padding(horizontal = Padding.medium, vertical = Padding.small),
             verticalAlignment = Alignment.CenterVertically,
@@ -120,7 +121,9 @@ fun SectionHeader(title: String, modifier: Modifier = Modifier) {
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.primary,
         modifier =
-            modifier.fillMaxWidth().padding(horizontal = Padding.medium, vertical = Padding.small),
+            modifier
+                .fillMaxWidth()
+                .padding(horizontal = Padding.medium, vertical = Padding.small),
     )
 }
 

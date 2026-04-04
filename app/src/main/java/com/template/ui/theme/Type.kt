@@ -15,12 +15,12 @@ import com.template.R
 fun createFontFamily(@FontRes font: Int, vararg variation: FontVariation.Setting): FontFamily =
     FontFamily(
         listOf(
-                FontWeight.Normal,
-                FontWeight.Medium,
-                FontWeight.SemiBold,
-                FontWeight.Bold,
-                FontWeight.Black,
-            )
+            FontWeight.Normal,
+            FontWeight.Medium,
+            FontWeight.SemiBold,
+            FontWeight.Bold,
+            FontWeight.Black,
+        )
             .map { weight ->
                 Font(
                     resId = font,
@@ -28,9 +28,9 @@ fun createFontFamily(@FontRes font: Int, vararg variation: FontVariation.Setting
                     variationSettings =
                         FontVariation.Settings(
                             *buildList {
-                                    add(FontVariation.weight(weight.weight))
-                                    addAll(variation)
-                                }
+                                add(FontVariation.weight(weight.weight))
+                                addAll(variation)
+                            }
                                 .toTypedArray()
                         ),
                 )

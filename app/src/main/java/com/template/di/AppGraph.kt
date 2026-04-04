@@ -29,7 +29,8 @@ import timber.log.Timber
 interface AppGraph {
     val circuit: Circuit
 
-    @Provides fun provideApplicationContext(application: Application): Context = application
+    @Provides
+    fun provideApplicationContext(application: Application): Context = application
 
     @Provides
     @SingleIn(AppScope::class)

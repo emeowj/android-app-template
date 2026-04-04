@@ -84,12 +84,12 @@ fun AppScaffold(circuit: Circuit, modifier: Modifier = Modifier) {
                 )
 
             val selectedTab by
-                remember(backStack) {
-                    derivedStateOf {
-                        val top = backStack.topRecord?.screen
-                        NavigationTab.entries.firstOrNull { it.screen == top }
-                    }
+            remember(backStack) {
+                derivedStateOf {
+                    val top = backStack.topRecord?.screen
+                    NavigationTab.entries.firstOrNull { it.screen == top }
                 }
+            }
 
             ContentWithOverlays {
                 Scaffold(

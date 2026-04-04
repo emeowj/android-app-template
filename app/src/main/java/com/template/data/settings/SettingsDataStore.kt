@@ -11,13 +11,13 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
-import kotlin.properties.ReadOnlyProperty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlin.properties.ReadOnlyProperty
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
@@ -71,10 +71,10 @@ inline fun <reified T : Enum<T>> rememberEnumPreference(
     val initialValue = context.dataStore[key].toEnum(defaultValue = defaultValue)
     val state =
         remember {
-                context.dataStore.data
-                    .map { it[key].toEnum(defaultValue = defaultValue) }
-                    .distinctUntilChanged()
-            }
+            context.dataStore.data
+                .map { it[key].toEnum(defaultValue = defaultValue) }
+                .distinctUntilChanged()
+        }
             .collectAsState(initialValue)
 
     return remember {

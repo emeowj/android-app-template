@@ -38,7 +38,8 @@ import dev.zacsweers.metro.AppScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
-@Parcelize data object SettingsScreen : StaticScreen
+@Parcelize
+data object SettingsScreen : StaticScreen
 
 @CircuitInject(SettingsScreen::class, AppScope::class)
 @Composable
@@ -74,7 +75,9 @@ fun SettingsUi(modifier: Modifier = Modifier) {
         },
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
     ) { paddingValues ->
-        LazyColumn(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+        LazyColumn(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)) {
             item { SectionHeader(title = stringResource(R.string.settings_appearance_section)) }
 
             item {

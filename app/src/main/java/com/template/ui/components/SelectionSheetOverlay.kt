@@ -93,7 +93,10 @@ fun SelectionSheetFooter(
     applyText: String = stringResource(R.string.overlay_apply),
 ) {
     Row(
-        modifier = modifier.fillMaxWidth().padding(all = Padding.medium).navigationBarsPadding(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(all = Padding.medium)
+            .navigationBarsPadding(),
         horizontalArrangement = Arrangement.spacedBy(Padding.small),
     ) {
         OutlinedButton(
@@ -167,7 +170,9 @@ internal fun <T> SelectionSheet(
             },
     ) {
         LazyColumn(
-            modifier = Modifier.padding(horizontal = Padding.small).navigationBarsPadding(),
+            modifier = Modifier
+                .padding(horizontal = Padding.small)
+                .navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(Padding.hairline),
         ) {
             itemsIndexed(items = options) { index, option ->
@@ -190,7 +195,8 @@ internal fun <T> SelectionSheet(
                 ) {
                     Row(
                         modifier =
-                            Modifier.fillMaxWidth()
+                            Modifier
+                                .fillMaxWidth()
                                 .heightIn(min = 56.dp)
                                 .padding(horizontal = Padding.medium),
                         verticalAlignment = Alignment.CenterVertically,
@@ -213,7 +219,9 @@ internal fun <T> SelectionSheet(
             }
 
             item(key = "spacer") {
-                Spacer(modifier = Modifier.navigationBarsPadding().padding(bottom = Padding.medium))
+                Spacer(modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(bottom = Padding.medium))
             }
         }
     }

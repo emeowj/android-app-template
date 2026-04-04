@@ -128,7 +128,8 @@ private fun SearchTopbar(state: SearchScreen.State) {
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         contentPadding = PaddingValues(horizontal = Padding.small),
         modifier =
-            Modifier.drawBehind {
+            Modifier
+                .drawBehind {
                     drawRect(
                         brush = Brush.verticalGradient(0f to background, 1f to Color.Transparent)
                     )
@@ -206,7 +207,9 @@ private fun SearchTextField(
 @Composable
 private fun EmptyResultUi(paddingValues: PaddingValues, modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier.fillMaxSize().padding(paddingValues),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -235,7 +238,9 @@ private fun SearchResultUi(
         val listState = rememberLazyListState()
         LazyColumn(
             state = listState,
-            modifier = modifier.fillMaxSize().padding(horizontal = Padding.small),
+            modifier = modifier
+                .fillMaxSize()
+                .padding(horizontal = Padding.small),
             contentPadding = paddingValues,
             verticalArrangement = Arrangement.spacedBy(Padding.hairline),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -255,7 +260,8 @@ private fun SearchResultUi(
                     shape = AppShape.calculateListShape(index, state.results.size),
                     onClick = { state.eventSink(SearchScreen.Event.ClickResult(result)) },
                     modifier =
-                        Modifier.animateItem()
+                        Modifier
+                            .animateItem()
                             .padding(top = if (index == 0) Padding.small else 0.dp),
                 )
             }
@@ -283,14 +289,17 @@ private fun ResultItem(
         modifier = modifier.fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier.padding(Padding.medium).fillMaxWidth(),
+            modifier = Modifier
+                .padding(Padding.medium)
+                .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
                 model = result.artworkUrl100,
                 contentDescription = null,
                 modifier =
-                    Modifier.size(64.dp)
+                    Modifier
+                        .size(64.dp)
                         .clip(RoundedCornerShape(AppShape.largeRadius - Padding.medium))
                         .background(
                             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
