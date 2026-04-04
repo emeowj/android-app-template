@@ -75,15 +75,12 @@ import dev.zacsweers.metro.AppScope
 fun SearchUi(state: SearchScreen.State, modifier: Modifier = Modifier) {
     Scaffold(
         modifier = modifier,
-        topBar = {
-            SearchTopbar(state = state)
-        },
+        topBar = { SearchTopbar(state = state) },
         containerColor = MaterialTheme.colorScheme.surfaceContainer,
     ) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize()) {
             when (state) {
-                is SearchScreen.State.Empty ->
-                    EmptyResultUi(paddingValues = paddingValues)
+                is SearchScreen.State.Empty -> EmptyResultUi(paddingValues = paddingValues)
 
                 is SearchScreen.State.Loaded ->
                     SearchResultUi(state = state, paddingValues = paddingValues)
@@ -130,16 +127,13 @@ private fun SearchTopbar(state: SearchScreen.State) {
         },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
         contentPadding = PaddingValues(horizontal = Padding.small),
-        modifier = Modifier
-            .drawBehind {
-                drawRect(
-                    brush = Brush.verticalGradient(
-                        0f to background,
-                        1f to Color.Transparent
+        modifier =
+            Modifier.drawBehind {
+                    drawRect(
+                        brush = Brush.verticalGradient(0f to background, 1f to Color.Transparent)
                     )
-                )
-            }
-            .statusBarsPadding()
+                }
+                .statusBarsPadding(),
     )
 }
 
@@ -162,11 +156,12 @@ private fun SearchTextField(
                 .focusRequester(focusRequester)
                 .dropShadow(
                     shape = RoundedCornerShape(50),
-                    shadow = Shadow(
-                        radius = 4.dp,
-                        spread = 2.dp,
-                        color = MaterialTheme.colorScheme.surfaceContainer
-                    )
+                    shadow =
+                        Shadow(
+                            radius = 4.dp,
+                            spread = 2.dp,
+                            color = MaterialTheme.colorScheme.surfaceContainer,
+                        ),
                 ),
         placeholder = {
             Text(
@@ -209,14 +204,9 @@ private fun SearchTextField(
 }
 
 @Composable
-private fun EmptyResultUi(
-    paddingValues: PaddingValues,
-    modifier: Modifier = Modifier
-) {
+private fun EmptyResultUi(paddingValues: PaddingValues, modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(paddingValues),
+        modifier = modifier.fillMaxSize().padding(paddingValues),
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -231,13 +221,10 @@ private fun EmptyResultUi(
 private fun SearchResultUi(
     state: SearchScreen.State.Loaded,
     paddingValues: PaddingValues,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     if (state.results.isEmpty() && !state.isSearching) {
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
+        Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
                 text = stringResource(R.string.no_results),
                 style = MaterialTheme.typography.bodyLarge,
@@ -248,12 +235,10 @@ private fun SearchResultUi(
         val listState = rememberLazyListState()
         LazyColumn(
             state = listState,
-            modifier = modifier
-                .fillMaxSize()
-                .padding(horizontal = Padding.small),
+            modifier = modifier.fillMaxSize().padding(horizontal = Padding.small),
             contentPadding = paddingValues,
             verticalArrangement = Arrangement.spacedBy(Padding.hairline),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (state.isSearching) {
                 item(key = "loading") {
@@ -263,19 +248,15 @@ private fun SearchResultUi(
 
             itemsIndexed(
                 items = state.results,
-                key = { _, item ->
-                    item.trackId ?: item.collectionId ?: item.hashCode()
-                },
+                key = { _, item -> item.trackId ?: item.collectionId ?: item.hashCode() },
             ) { index, result ->
                 ResultItem(
                     result = result,
                     shape = AppShape.calculateListShape(index, state.results.size),
-                    onClick = {
-                        state.eventSink(SearchScreen.Event.ClickResult(result))
-                    },
-                    modifier = Modifier
-                        .animateItem()
-                        .padding(top = if (index == 0) Padding.small else 0.dp)
+                    onClick = { state.eventSink(SearchScreen.Event.ClickResult(result)) },
+                    modifier =
+                        Modifier.animateItem()
+                            .padding(top = if (index == 0) Padding.small else 0.dp),
                 )
             }
 
@@ -286,7 +267,6 @@ private fun SearchResultUi(
             }
         }
     }
-
 }
 
 @Composable
@@ -294,7 +274,7 @@ private fun ResultItem(
     result: ITunesResult,
     shape: Shape,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Surface(
         onClick = onClick,
@@ -303,17 +283,14 @@ private fun ResultItem(
         modifier = modifier.fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier
-                .padding(Padding.medium)
-                .fillMaxWidth(),
+            modifier = Modifier.padding(Padding.medium).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
                 model = result.artworkUrl100,
                 contentDescription = null,
                 modifier =
-                    Modifier
-                        .size(64.dp)
+                    Modifier.size(64.dp)
                         .clip(RoundedCornerShape(AppShape.largeRadius - Padding.medium))
                         .background(
                             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
