@@ -214,7 +214,7 @@ any axis — useful for previews, screenshot tests, or marketing surfaces that n
 
 ## Development
 
-See [AGENTS.md](AGENTS.md) for detailed build commands, testing instructions, and coding conventions.
+See [CLAUDE.md](CLAUDE.md) for detailed build commands, testing instructions, and coding conventions.
 
 ## License
 
