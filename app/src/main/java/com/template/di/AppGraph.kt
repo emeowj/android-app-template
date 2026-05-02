@@ -77,6 +77,6 @@ interface AppGraph {
 
     @DependencyGraph.Factory
     fun interface Factory {
-        fun create(@Provides application: Application): AppGraph
+        fun create(): AppGraph
     }
 }

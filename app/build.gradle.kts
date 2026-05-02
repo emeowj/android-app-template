@@ -9,7 +9,6 @@ val localProperties = Properties().apply {
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.metro)
@@ -20,12 +19,12 @@ plugins {
 
 android {
     namespace = "com.template"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.template"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "1.0"
 
@@ -91,6 +90,11 @@ kotlin {
 
 ksp {
     arg("circuit.codegen.mode", "metro")
+}
+
+tasks.withType<Test>().configureEach {
+    // https://github.com/cashapp/paparazzi/issues/2111
+    reports.html.required = false
 }
 
 dependencies {

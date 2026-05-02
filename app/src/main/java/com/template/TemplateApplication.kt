@@ -14,6 +14,6 @@ class TemplateApplication : Application() {
         if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         }
-        appGraph = createGraphFactory<AppGraph.Factory>().create(this)
+        appGraph = createGraphFactory<AppGraph.Factory>().create()
     }
 }
