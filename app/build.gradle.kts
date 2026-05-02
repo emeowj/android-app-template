@@ -1,4 +1,11 @@
+import java.util.Properties
+
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use(::load)
+}
 
 plugins {
     alias(libs.plugins.android.application)
@@ -25,12 +32,32 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            val passwordKey = "RELEASE_KEY_PASSWORD"
+            val password = System.getenv(passwordKey) ?: localProperties.getProperty(passwordKey)
+            val keystorePathKey = "RELEASE_KEYSTORE_PATH"
+            storeFile = file(
+                System.getenv(keystorePathKey)
+                    ?: localProperties.getProperty(keystorePathKey, "signing/release.keystore"),
+            )
+            keyAlias = "release"
+            storePassword = password
+            keyPassword = password
+        }
+    }
+
     buildTypes {
+        debug {
+            applicationIdSuffix = ".debug"
+        }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
