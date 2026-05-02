@@ -6,14 +6,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import com.template.data.settings.DarkMode
-import com.template.data.settings.DarkModeKey
-import com.template.data.settings.rememberEnumPreference
 import com.template.ui.AppScaffold
 import com.template.ui.theme.TemplateTheme
+import com.template.ui.theme.darkThemeFromSettings
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,13 +17,7 @@ class MainActivity : ComponentActivity() {
         val appGraph = (application as TemplateApplication).appGraph
 
         setContent {
-            val darkMode by rememberEnumPreference<DarkMode>(DarkModeKey)
-            val isDarkTheme =
-                when (darkMode) {
-                    DarkMode.SYSTEM -> isSystemInDarkTheme()
-                    DarkMode.LIGHT -> false
-                    DarkMode.DARK -> true
-                }
+            val isDarkTheme = darkThemeFromSettings()
 
             LaunchedEffect(isDarkTheme) {
                 enableEdgeToEdge(

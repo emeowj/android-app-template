@@ -300,7 +300,7 @@ private fun ResultItem(
                 modifier =
                     Modifier
                         .size(64.dp)
-                        .clip(RoundedCornerShape(AppShape.largeRadius - Padding.medium))
+                        .clip(RoundedCornerShape(AppShape.listFullRadius - Padding.medium))
                         .background(
                             color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
                         ),

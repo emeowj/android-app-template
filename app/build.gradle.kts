@@ -83,6 +83,8 @@ dependencies {
     implementation(libs.circuitx.overlays)
     implementation(libs.coil3.compose)
     implementation(libs.coil3.network.okhttp)
+    implementation(libs.material.kolor)
+    implementation(libs.palette)
     implementation(libs.timber)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)

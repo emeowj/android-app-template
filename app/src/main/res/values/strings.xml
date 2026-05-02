@@ -14,12 +14,38 @@
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
     <string name="settings_appearance_section">Appearance</string>
+    <string name="settings_typography_section">Typography</string>
+    <string name="settings_behavior_section">Behavior</string>
+
     <string name="settings_dark_mode_title">Dark Mode</string>
     <string name="settings_dark_mode_system">System Default</string>
     <string name="settings_dark_mode_light">Light</string>
     <string name="settings_dark_mode_dark">Dark</string>
 
-    <string name="settings_behavior_section">Behavior</string>
+    <string name="settings_colors_title">Colors</string>
+    <string name="settings_dynamic_color_title">Dynamic Color</string>
+    <string name="color_preset_teal">Teal</string>
+    <string name="color_preset_cyan">Cyan</string>
+    <string name="color_preset_gold">Gold</string>
+    <string name="color_preset_pink">Pink</string>
+    <string name="color_preset_indigo">Indigo</string>
+    <string name="color_preset_forest">Forest</string>
+
+    <string name="settings_base_size_title">Base Size</string>
+    <string name="base_size_small">Small</string>
+    <string name="base_size_medium">Medium</string>
+    <string name="base_size_large">Large</string>
+
+    <string name="settings_display_font_title">Display Font</string>
+    <string name="settings_body_font_title">Body Font</string>
+    <string name="font_google_sans_flex">Google Sans Flex</string>
+    <string name="font_hanken_grotesk">Hanken Grotesk</string>
+    <string name="font_space_grotesk">Space Grotesk</string>
+    <string name="font_fredoka">Fredoka</string>
+    <string name="font_fascinate">Fascinate</string>
+    <string name="font_lobster">Lobster</string>
+    <string name="font_roboto_serif">Roboto Serif</string>
+
     <string name="settings_haptic_feedback_title">Haptic Feedback</string>
 
     <!-- Search Screen -->
