@@ -1,52 +1,52 @@
 package com.template.screens.search
 
+import android.app.Application
 import com.slack.circuit.test.test
-import com.template.data.itunes.ITunesClient
+import com.template.MainDispatcherRule
 import com.template.data.itunes.ITunesResult
 import com.template.data.itunes.ITunesSearchResponse
-import io.ktor.client.HttpClient
+import com.template.di.BaseTestGraph
+import com.template.testApplication
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.createGraphFactory
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.headersOf
-import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.test.TestDispatcher
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
-import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
-import kotlinx.coroutines.test.setMain
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TestWatcher
-import org.junit.runner.Description
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
 
-class MainDispatcherRule(val testDispatcher: TestDispatcher = UnconfinedTestDispatcher()) :
-    TestWatcher() {
-    override fun starting(description: Description) {
-        Dispatchers.setMain(testDispatcher)
-    }
-
-    override fun finished(description: Description) {
-        Dispatchers.resetMain()
-    }
-}
-
+@RunWith(RobolectricTestRunner::class)
 class SearchPresenterTest {
-    @get:Rule val mainDispatcherRule = MainDispatcherRule()
+    @get:Rule
+    val mainDispatcherRule = MainDispatcherRule()
 
     private val json = Json { ignoreUnknownKeys = true }
 
+    private val engine = MockEngine.Queue()
+    private lateinit var presenterFactory: SearchPresenter.Factory
+
+    @Before
+    fun setUp() {
+        presenterFactory = createGraphFactory<SearchPresenterTestGraph.Factory>()
+            .create(testApplication(), engine)
+            .presenterFactory
+    }
+
     @Test
     fun `initial state is empty`() = runTest {
-        val client = createMockClient(ITunesSearchResponse(0, emptyList()))
-        val presenter = SearchPresenter(SearchScreen(), client)
+        enqueueResponse(ITunesSearchResponse(0, emptyList()))
+        val presenter = presenterFactory.create(SearchScreen())
 
         presenter.test {
             val state = awaitItem()
@@ -66,22 +66,19 @@ class SearchPresenterTest {
                     wrapperType = "track",
                 )
             )
-        val client = createMockClient(ITunesSearchResponse(1, results))
-        val presenter = SearchPresenter(SearchScreen(), client)
+        enqueueResponse(ITunesSearchResponse(1, results))
+        val presenter = presenterFactory.create(SearchScreen())
 
         presenter.test {
             val initialState = awaitItem()
             initialState.eventSink(SearchScreen.Event.UpdateQuery("test"))
 
-            // 1. Query update state
             val stateAfterQueryUpdate = awaitItem()
             assertEquals("test", stateAfterQueryUpdate.query)
 
-            // 2. Searching state (after debounce)
             val searchingState = awaitItem()
             assertTrue(searchingState is SearchScreen.State.Loaded && searchingState.isSearching)
 
-            // 3. Results loaded state
             val loadedState = awaitItem()
             assertTrue(loadedState is SearchScreen.State.Loaded)
             val loaded = loadedState as SearchScreen.State.Loaded
@@ -94,41 +91,25 @@ class SearchPresenterTest {
     @Test
     fun `should correctly parse real iTunes API response`() = runTest {
         val jsonString = javaClass.classLoader!!.getResource("search_result.json")!!.readText()
-        val mockEngine = MockEngine { _ ->
+        engine.enqueue {
             respond(
                 content = jsonString,
                 headers =
                     headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
             )
         }
-        val httpClient =
-            HttpClient(mockEngine) {
-                install(ContentNegotiation) {
-                    json(
-                        Json {
-                            ignoreUnknownKeys = true
-                            isLenient = true
-                            coerceInputValues = true
-                        }
-                    )
-                }
-            }
-        val client = ITunesClient(httpClient)
-        val presenter = SearchPresenter(SearchScreen(), client)
+        val presenter = presenterFactory.create(SearchScreen())
 
         presenter.test {
             val initialState = awaitItem()
             initialState.eventSink(SearchScreen.Event.UpdateQuery("raye"))
 
-            // 1. Query update state
             val stateAfterQueryUpdate = awaitItem()
             assertEquals("raye", stateAfterQueryUpdate.query)
 
-            // 2. Searching state
             val searchingState = awaitItem()
             assertTrue(searchingState is SearchScreen.State.Loaded && searchingState.isSearching)
 
-            // 3. Results loaded state
             val loadedState = awaitItem()
             assertTrue(loadedState is SearchScreen.State.Loaded)
             val loaded = loadedState as SearchScreen.State.Loaded
@@ -139,15 +120,26 @@ class SearchPresenterTest {
         }
     }
 
-    private fun createMockClient(response: ITunesSearchResponse): ITunesClient {
-        val mockEngine = MockEngine { _ ->
+    private fun enqueueResponse(response: ITunesSearchResponse) {
+        engine.enqueue {
             respond(
                 content = json.encodeToString(response),
                 headers =
                     headersOf(HttpHeaders.ContentType, ContentType.Application.Json.toString()),
             )
         }
-        val httpClient = HttpClient(mockEngine) { install(ContentNegotiation) { json(json) } }
-        return ITunesClient(httpClient)
+    }
+}
+
+@DependencyGraph(AppScope::class)
+interface SearchPresenterTestGraph : BaseTestGraph {
+    val presenterFactory: SearchPresenter.Factory
+
+    @DependencyGraph.Factory
+    fun interface Factory {
+        fun create(
+            @Provides application: Application,
+            @Provides engine: MockEngine,
+        ): SearchPresenterTestGraph
     }
 }

@@ -22,6 +22,7 @@ materialKolor = "4.1.1"
 metro = "0.12.1"
 palette = "1.0.0"
 paparazzi = "2.0.0-alpha04"
+robolectric = "4.16.1"
 timber = "5.0.1"
 turbine = "1.2.1"
 spotless = "8.4.0"
@@ -60,6 +61,7 @@ kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-cor
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 material-kolor = { group = "com.materialkolor", name = "material-kolor", version.ref = "materialKolor" }
 palette = { group = "androidx.palette", name = "palette-ktx", version.ref = "palette" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
