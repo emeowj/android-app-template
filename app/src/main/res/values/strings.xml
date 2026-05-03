@@ -14,7 +14,6 @@
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
     <string name="settings_appearance_section">Appearance</string>
-    <string name="settings_typography_section">Typography</string>
     <string name="settings_behavior_section">Behavior</string>
 
     <string name="settings_dark_mode_title">Dark Mode</string>
@@ -30,6 +29,12 @@
     <string name="color_preset_pink">Pink</string>
     <string name="color_preset_indigo">Indigo</string>
     <string name="color_preset_forest">Forest</string>
+
+    <string name="settings_typography_title">Typography</string>
+    <string name="settings_typography_size_label">Size</string>
+    <string name="settings_typography_fonts_label">Fonts</string>
+    <string name="settings_typography_pairing_builder_title">Custom Pairing</string>
+    <string name="settings_typography_add_pairing_cd">Create custom pairing</string>
 
     <string name="settings_base_size_title">Base Size</string>
     <string name="base_size_small">Small</string>

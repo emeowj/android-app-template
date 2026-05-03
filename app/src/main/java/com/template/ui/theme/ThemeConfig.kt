@@ -124,6 +124,20 @@ data class ColorPreset(val id: String, @StringRes val nameRes: Int, val color: C
     }
 }
 
+data class FontPairing(val display: AppFontFamily, val body: AppFontFamily) {
+    companion object {
+        val PRESETS =
+            listOf(
+                FontPairing(AppFontFamily.GOOGLE_SANS_FLEX, AppFontFamily.GOOGLE_SANS_FLEX),
+                FontPairing(AppFontFamily.SPACE_GROTESK, AppFontFamily.HANKEN_GROTESK),
+                FontPairing(AppFontFamily.ROBOTO_SERIF, AppFontFamily.HANKEN_GROTESK),
+                FontPairing(AppFontFamily.FREDOKA, AppFontFamily.HANKEN_GROTESK),
+                FontPairing(AppFontFamily.LOBSTER, AppFontFamily.HANKEN_GROTESK),
+                FontPairing(AppFontFamily.FASCINATE, AppFontFamily.SPACE_GROTESK),
+            )
+    }
+}
+
 const val DefaultDisplayFontWidth = 92
 const val DefaultDisplayFontGrade = 40
 const val DefaultDisplayFontRond = 98

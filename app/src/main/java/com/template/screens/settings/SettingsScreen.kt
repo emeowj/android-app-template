@@ -13,7 +13,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -37,23 +36,21 @@ import com.template.data.settings.HapticFeedbackEnabledKey
 import com.template.data.settings.UseDynamicColorKey
 import com.template.data.settings.rememberEnumPreference
 import com.template.data.settings.rememberPreference
-import com.template.ui.components.ChoiceOption
-import com.template.ui.components.ColorChipGridContent
-import com.template.ui.components.ColorChoice
-import com.template.ui.components.RadioListSelectionContent
-import com.template.ui.components.SectionHeader
-import com.template.ui.components.SelectionResult
-import com.template.ui.components.SettingsNavigationRow
-import com.template.ui.components.SettingsToggleRow
-import com.template.ui.components.selectionSheetOverlay
+import com.template.screens.settings.components.ChoiceOption
+import com.template.screens.settings.components.ColorChipGridContent
+import com.template.screens.settings.components.ColorChoice
+import com.template.screens.settings.components.RadioListSelectionContent
+import com.template.screens.settings.components.SectionHeader
+import com.template.screens.settings.components.SelectionResult
+import com.template.screens.settings.components.SettingsNavigationRow
+import com.template.screens.settings.components.SettingsToggleRow
+import com.template.screens.settings.components.selectionSheetOverlay
+import com.template.screens.settings.components.typographySheetOverlay
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
-import com.template.ui.theme.AppFontFamily
 import com.template.ui.theme.AppShape
-import com.template.ui.theme.BaseSize
 import com.template.ui.theme.ColorPreset
 import com.template.ui.theme.Padding
-import com.template.ui.theme.ThemeEngine
 import dev.zacsweers.metro.AppScope
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
@@ -68,9 +65,9 @@ fun SettingsUi(modifier: Modifier = Modifier) {
     var hapticFeedbackEnabled by rememberPreference(HapticFeedbackEnabledKey, true)
     var useDynamicColor by rememberPreference(UseDynamicColorKey, true)
     var colorPresetId by rememberPreference(ColorPresetIdKey, ColorPreset.DEFAULT.id)
-    var baseSize by rememberEnumPreference(BaseSizeKey)
-    var displayFontFamily by rememberEnumPreference(DisplayFontFamilyKey)
-    var bodyFontFamily by rememberEnumPreference(BodyFontFamilyKey)
+    val baseSize by rememberEnumPreference(BaseSizeKey)
+    val displayFontFamily by rememberEnumPreference(DisplayFontFamilyKey)
+    val bodyFontFamily by rememberEnumPreference(BodyFontFamilyKey)
 
     val overlayHost = LocalOverlayHost.current
     val scope = rememberCoroutineScope()
@@ -93,23 +90,10 @@ fun SettingsUi(modifier: Modifier = Modifier) {
         if (useDynamicColor) stringResource(R.string.settings_dynamic_color_title)
         else colorPresetLabel
 
-    val baseSizeOptions =
-        BaseSize.entries.map { ChoiceOption(it, stringResource(it.displayNameRes)) }
-    val baseSizeLabel = baseSizeOptions.find { it.value == baseSize }?.label ?: ""
-
-    val fontFamilies =
-        remember { AppFontFamily.entries.associateWith { ThemeEngine.createFontFamily(it) } }
-    val bodyLargeStyle = MaterialTheme.typography.bodyLarge
-    val fontOptions =
-        AppFontFamily.entries.map { font ->
-            ChoiceOption(
-                value = font,
-                label = stringResource(font.displayNameRes),
-                labelStyle = bodyLargeStyle.copy(fontFamily = fontFamilies[font]),
-            )
-        }
-    val displayFontLabel = fontOptions.find { it.value == displayFontFamily }?.label ?: ""
-    val bodyFontLabel = fontOptions.find { it.value == bodyFontFamily }?.label ?: ""
+    val baseSizeLabel = stringResource(baseSize.displayNameRes)
+    val displayFontLabel = stringResource(displayFontFamily.displayNameRes)
+    val bodyFontLabel = stringResource(bodyFontFamily.displayNameRes)
+    val typographySummary = "$displayFontLabel · $bodyFontLabel · $baseSizeLabel"
 
     val appearanceRows =
         buildList<@Composable (Shape) -> Unit> {
@@ -173,89 +157,13 @@ fun SettingsUi(modifier: Modifier = Modifier) {
                     showChevron = false,
                 )
             }
-        }
-
-    val typographyRows =
-        buildList<@Composable (Shape) -> Unit> {
             add { shape ->
                 SettingsNavigationRow(
-                    title = stringResource(R.string.settings_base_size_title),
-                    description = baseSizeLabel,
+                    title = stringResource(R.string.settings_typography_title),
+                    description = typographySummary,
                     icon = painterResource(R.drawable.ic_format_size),
                     onClick = {
-                        scope.launch {
-                            val result =
-                                overlayHost.show(
-                                    selectionSheetOverlay(
-                                        titleRes = R.string.settings_base_size_title,
-                                        selected = baseSize,
-                                    ) { sel, onSel ->
-                                        RadioListSelectionContent(
-                                            options = baseSizeOptions,
-                                            selected = sel,
-                                            onSelect = onSel,
-                                        )
-                                    }
-                                )
-                            if (result is SelectionResult.Selected) baseSize = result.value
-                        }
-                    },
-                    modifier = Modifier.padding(horizontal = Padding.medium),
-                    shape = shape,
-                    showChevron = false,
-                )
-            }
-            add { shape ->
-                SettingsNavigationRow(
-                    title = stringResource(R.string.settings_display_font_title),
-                    description = displayFontLabel,
-                    icon = painterResource(R.drawable.ic_title),
-                    onClick = {
-                        scope.launch {
-                            val result =
-                                overlayHost.show(
-                                    selectionSheetOverlay(
-                                        titleRes = R.string.settings_display_font_title,
-                                        selected = displayFontFamily,
-                                    ) { sel, onSel ->
-                                        RadioListSelectionContent(
-                                            options = fontOptions,
-                                            selected = sel,
-                                            onSelect = onSel,
-                                        )
-                                    }
-                                )
-                            if (result is SelectionResult.Selected)
-                                displayFontFamily = result.value
-                        }
-                    },
-                    modifier = Modifier.padding(horizontal = Padding.medium),
-                    shape = shape,
-                    showChevron = false,
-                )
-            }
-            add { shape ->
-                SettingsNavigationRow(
-                    title = stringResource(R.string.settings_body_font_title),
-                    description = bodyFontLabel,
-                    icon = painterResource(R.drawable.ic_match_case),
-                    onClick = {
-                        scope.launch {
-                            val result =
-                                overlayHost.show(
-                                    selectionSheetOverlay(
-                                        titleRes = R.string.settings_body_font_title,
-                                        selected = bodyFontFamily,
-                                    ) { sel, onSel ->
-                                        RadioListSelectionContent(
-                                            options = fontOptions,
-                                            selected = sel,
-                                            onSelect = onSel,
-                                        )
-                                    }
-                                )
-                            if (result is SelectionResult.Selected) bodyFontFamily = result.value
-                        }
+                        scope.launch { overlayHost.show(typographySheetOverlay()) }
                     },
                     modifier = Modifier.padding(horizontal = Padding.medium),
                     shape = shape,
@@ -279,7 +187,6 @@ fun SettingsUi(modifier: Modifier = Modifier) {
         }
 
     val appearanceTitle = stringResource(R.string.settings_appearance_section)
-    val typographyTitle = stringResource(R.string.settings_typography_section)
     val behaviorTitle = stringResource(R.string.settings_behavior_section)
 
     Scaffold(
@@ -307,11 +214,6 @@ fun SettingsUi(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(Padding.hairline),
         ) {
             settingsSection(title = appearanceTitle, rows = appearanceRows)
-            settingsSection(
-                title = typographyTitle,
-                rows = typographyRows,
-                topPadding = Padding.medium,
-            )
             settingsSection(
                 title = behaviorTitle,
                 rows = behaviorRows,

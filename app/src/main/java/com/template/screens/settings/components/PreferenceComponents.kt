@@ -1,4 +1,4 @@
-package com.template.ui.components
+package com.template.screens.settings.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

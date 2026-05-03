@@ -1,4 +1,4 @@
-package com.template.ui.components
+package com.template.screens.settings.components
 
 import android.os.Build
 import androidx.compose.foundation.BorderStroke

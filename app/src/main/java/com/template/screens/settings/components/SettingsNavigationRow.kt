@@ -1,4 +1,4 @@
-package com.template.ui.components
+package com.template.screens.settings.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -34,7 +35,7 @@ fun SettingsNavigationRow(
     icon: Painter? = null,
     description: String? = null,
     titleColor: Color = MaterialTheme.colorScheme.onSurface,
-    shape: Shape = androidx.compose.ui.graphics.RectangleShape,
+    shape: Shape = RectangleShape,
     showChevron: Boolean = true,
 ) {
     Surface(modifier = modifier, onClick = onClick, shape = shape) {
