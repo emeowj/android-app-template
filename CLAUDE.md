@@ -83,6 +83,15 @@ The full theming story is in the **README** (color presets, fonts, variable-font
 - `MainActivity` calls `darkThemeFromSettings()` and reapplies `enableEdgeToEdge` whenever the resolved dark-mode setting flips — don't call `enableEdgeToEdge` from elsewhere.
 - For previews/screenshot tests that need a fixed look, pass overrides directly: `TemplateTheme(typography = ..., colorScheme = ..., darkTheme = ...)`.
 
+### UI component packaging
+
+Where a `@Composable` lives is determined by who uses it.
+
+- **Single-screen components** live next to that screen. Small screens (`screens/home/`, `screens/search/`) keep their composables as top-level files. Once a screen grows enough to warrant it, move its private components into a `screens/<name>/components/` sub-package — `screens/settings/components/` (`PreferenceComponents.kt`, `TypographySheetOverlay.kt`, `BaseSizeSlider.kt`, …) is the canonical example.
+- **Shared components** — anything used by two or more screens, or a generic primitive that isn't tied to one screen's concept — live under `ui/components/`. The existing `ui/` siblings (`ui/haptic/`, `ui/previews/`, `ui/theme/`) already group by concept at the `ui/` level; `ui/components/` follows the same shape one level down.
+- **Group by concept.** Inside both `screens/<name>/components/` and `ui/components/`, create a sub-package once a cluster of related composables forms around one concept (e.g. `ui/components/typography/`). A flat folder is fine until that cluster appears — don't pre-create empty concept packages.
+- **Promotion.** Move a file from `screens/<name>/components/` up to `ui/components/<concept>/` the first time a second screen needs it, or when it's clearly a generic primitive (no screen-specific copy or state shape). Promote the file alone; don't drag the rest of the screen's components with it.
+
 ## Conventions worth knowing
 
 - **String resources only** in Composables — no hardcoded UI text.
