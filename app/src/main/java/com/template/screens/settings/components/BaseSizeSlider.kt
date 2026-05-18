@@ -40,9 +40,11 @@ fun BaseSizeSlider(
                 .padding(horizontal = Padding.medium, vertical = Padding.small),
             verticalArrangement = Arrangement.spacedBy(Padding.small),
         ) {
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = Padding.small)) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = Padding.small),
+            ) {
                 entries.forEachIndexed { index, size ->
                     val isSelected = index == selectedIndex
                     Text(
@@ -50,8 +52,11 @@ fun BaseSizeSlider(
                         style = MaterialTheme.typography.labelMedium,
                         fontWeight = if (isSelected) FontWeight.SemiBold else FontWeight.Normal,
                         color =
-                            if (isSelected) MaterialTheme.colorScheme.primary
-                            else MaterialTheme.colorScheme.onSurfaceVariant,
+                            if (isSelected) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            },
                         textAlign =
                             when (index) {
                                 0 -> TextAlign.Start

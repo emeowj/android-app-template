@@ -11,24 +11,21 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
+import kotlin.properties.ReadOnlyProperty
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlin.properties.ReadOnlyProperty
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
-operator fun <T> DataStore<Preferences>.get(key: Preferences.Key<T>): T? =
-    runBlocking(Dispatchers.IO) { data.first()[key] }
+operator fun <T> DataStore<Preferences>.get(key: Preferences.Key<T>): T? = runBlocking(Dispatchers.IO) { data.first()[key] }
 
-fun <T> DataStore<Preferences>.get(key: Preferences.Key<T>, defaultValue: T): T =
-    runBlocking(Dispatchers.IO) { data.first()[key] ?: defaultValue }
+fun <T> DataStore<Preferences>.get(key: Preferences.Key<T>, defaultValue: T): T = runBlocking(Dispatchers.IO) { data.first()[key] ?: defaultValue }
 
-fun <T> preference(context: Context, key: Preferences.Key<T>, defaultValue: T) =
-    ReadOnlyProperty<Any?, T> { _, _ -> context.dataStore[key] ?: defaultValue }
+fun <T> preference(context: Context, key: Preferences.Key<T>, defaultValue: T) = ReadOnlyProperty<Any?, T> { _, _ -> context.dataStore[key] ?: defaultValue }
 
 inline fun <reified T : Enum<T>> enumPreference(
     context: Context,
@@ -94,16 +91,15 @@ inline fun <reified T : Enum<T>> rememberEnumPreference(
 
 @Composable
 inline fun <reified T : Enum<T>> rememberEnumPreference(
-    enumKey: EnumPreferencesKey<T>
+    enumKey: EnumPreferencesKey<T>,
 ): MutableState<T> = rememberEnumPreference(enumKey.key, enumKey.defaultValue)
 
-inline fun <reified T : Enum<T>> String?.toEnum(defaultValue: T): T =
-    if (this == null) {
+inline fun <reified T : Enum<T>> String?.toEnum(defaultValue: T): T = if (this == null) {
+    defaultValue
+} else {
+    try {
+        enumValueOf(this)
+    } catch (e: IllegalArgumentException) {
         defaultValue
-    } else {
-        try {
-            enumValueOf(this)
-        } catch (e: IllegalArgumentException) {
-            defaultValue
-        }
     }
+}

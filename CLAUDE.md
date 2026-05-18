@@ -18,6 +18,10 @@ Android app *template* — a starting point that gets renamed/rebranded per proj
 ./gradlew :app:testDebugUnitTest --tests "com.template.screens.search.SearchPresenterTest"  # single test class
 
 ./gradlew lint
+./gradlew spotlessCheck               # formatting check
+./gradlew spotlessApply               # apply formatting
+prek install                          # install Git pre-commit hook
+prek run --all-files                  # run configured hooks
 ```
 
 ### Paparazzi (screenshot tests)

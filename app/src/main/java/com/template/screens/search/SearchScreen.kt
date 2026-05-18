@@ -12,8 +12,7 @@ data class SearchScreen(val initialQuery: String = "") : Screen {
         val query: String
         val eventSink: (Event) -> Unit
 
-        data class Empty(override val query: String = "", override val eventSink: (Event) -> Unit) :
-            State
+        data class Empty(override val query: String = "", override val eventSink: (Event) -> Unit) : State
 
         data class Loaded(
             override val query: String,

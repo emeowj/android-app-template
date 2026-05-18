@@ -60,7 +60,7 @@ fun SelectionSheetContent(
                 title = { Text(text = title, fontWeight = FontWeight.Bold) },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),
             )
 
@@ -85,17 +85,16 @@ fun <T> selectionSheetOverlay(
     @StringRes titleRes: Int,
     selected: T,
     content: @Composable (selected: T, onSelect: (T) -> Unit) -> Unit,
-): BottomSheetOverlay<Unit, SelectionResult<T>> =
-    BottomSheetOverlay(
-        model = Unit,
-        onDismiss = { SelectionResult.Cancelled },
-        skipPartiallyExpandedState = true,
-        dragHandle = {},
-    ) { _, navigator ->
-        SelectionSheetContent(title = stringResource(titleRes)) {
-            content(selected) { navigator.finish(SelectionResult.Selected(it)) }
-        }
+): BottomSheetOverlay<Unit, SelectionResult<T>> = BottomSheetOverlay(
+    model = Unit,
+    onDismiss = { SelectionResult.Cancelled },
+    skipPartiallyExpandedState = true,
+    dragHandle = {},
+) { _, navigator ->
+    SelectionSheetContent(title = stringResource(titleRes)) {
+        content(selected) { navigator.finish(SelectionResult.Selected(it)) }
     }
+}
 
 /**
  * Default radio-list rendering for [selectionSheetOverlay].
@@ -158,7 +157,7 @@ fun <T> RadioListSelectionContent(
             Spacer(
                 modifier = Modifier
                     .navigationBarsPadding()
-                    .padding(bottom = Padding.medium)
+                    .padding(bottom = Padding.medium),
             )
         }
     }

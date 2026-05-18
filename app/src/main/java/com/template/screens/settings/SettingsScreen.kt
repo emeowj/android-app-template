@@ -87,8 +87,11 @@ fun SettingsUi(modifier: Modifier = Modifier) {
     val currentColorChoice: ColorChoice =
         if (useDynamicColor) ColorChoice.Dynamic else ColorChoice.Preset(colorPresetId)
     val colorsLabel =
-        if (useDynamicColor) stringResource(R.string.settings_dynamic_color_title)
-        else colorPresetLabel
+        if (useDynamicColor) {
+            stringResource(R.string.settings_dynamic_color_title)
+        } else {
+            colorPresetLabel
+        }
 
     val baseSizeLabel = stringResource(baseSize.displayNameRes)
     val displayFontLabel = stringResource(displayFontFamily.displayNameRes)
@@ -115,7 +118,7 @@ fun SettingsUi(modifier: Modifier = Modifier) {
                                             selected = sel,
                                             onSelect = onSel,
                                         )
-                                    }
+                                    },
                                 )
                             if (result is SelectionResult.Selected) darkMode = result.value
                         }
@@ -139,11 +142,12 @@ fun SettingsUi(modifier: Modifier = Modifier) {
                                         selected = currentColorChoice,
                                     ) { sel, onSel ->
                                         ColorChipGridContent(selected = sel, onSelect = onSel)
-                                    }
+                                    },
                                 )
                             if (result is SelectionResult.Selected) {
                                 when (val choice = result.value) {
                                     is ColorChoice.Dynamic -> useDynamicColor = true
+
                                     is ColorChoice.Preset -> {
                                         useDynamicColor = false
                                         colorPresetId = choice.id
@@ -201,7 +205,7 @@ fun SettingsUi(modifier: Modifier = Modifier) {
                 },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),
             )
         },

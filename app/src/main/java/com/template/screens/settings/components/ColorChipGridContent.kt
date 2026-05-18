@@ -102,10 +102,14 @@ internal fun ColorChip(
             val isDark = darkThemeFromSettings()
             when {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.S ->
-                    if (isDark) dynamicDarkColorScheme(context)
-                    else dynamicLightColorScheme(context)
+                    if (isDark) {
+                        dynamicDarkColorScheme(context)
+                    } else {
+                        dynamicLightColorScheme(context)
+                    }
 
                 isDark -> darkColorScheme()
+
                 else -> lightColorScheme()
             }
         } else {

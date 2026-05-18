@@ -8,7 +8,8 @@ import com.template.R
 enum class BaseSize(val bodySizeSp: Int, @StringRes val displayNameRes: Int) {
     SMALL(14, R.string.base_size_small),
     MEDIUM(16, R.string.base_size_medium),
-    LARGE(18, R.string.base_size_large);
+    LARGE(18, R.string.base_size_large),
+    ;
 
     companion object {
         val DEFAULT = MEDIUM
@@ -73,7 +74,8 @@ enum class AppFontFamily(
                 FontAxisConfig(FontAxis.WIDTH, min = 50f, max = 150f, default = 100f),
                 FontAxisConfig(FontAxis.GRADE, min = -50f, max = 100f, default = 0f),
             ),
-    );
+    ),
+    ;
 
     val supportsVariableSettings: Boolean
         get() = supportedAxes.isNotEmpty()

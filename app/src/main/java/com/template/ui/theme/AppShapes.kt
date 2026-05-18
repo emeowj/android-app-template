@@ -47,23 +47,20 @@ object AppShape {
             bottomEnd = 0.dp,
         )
 
-    fun listItemShape(index: Int, total: Int): Shape =
-        when {
-            total == 1 -> listFull
-            index == 0 -> listTop
-            index == total - 1 -> listBottom
-            else -> listMiddle
-        }
+    fun listItemShape(index: Int, total: Int): Shape = when {
+        total == 1 -> listFull
+        index == 0 -> listTop
+        index == total - 1 -> listBottom
+        else -> listMiddle
+    }
 
-    fun calculateListShape(index: Int, size: Int): Shape =
-        listItemShape(index = index, total = size)
+    fun calculateListShape(index: Int, size: Int): Shape = listItemShape(index = index, total = size)
 }
 
-fun appMaterialShapes(): Shapes =
-    Shapes(
-        extraSmall = AppShape.chip as CornerBasedShape,
-        small = AppShape.input as CornerBasedShape,
-        medium = AppShape.card as CornerBasedShape,
-        large = AppShape.dialog as CornerBasedShape,
-        extraLarge = AppShape.sheet as CornerBasedShape,
-    )
+fun appMaterialShapes(): Shapes = Shapes(
+    extraSmall = AppShape.chip as CornerBasedShape,
+    small = AppShape.input as CornerBasedShape,
+    medium = AppShape.card as CornerBasedShape,
+    large = AppShape.dialog as CornerBasedShape,
+    extraLarge = AppShape.sheet as CornerBasedShape,
+)

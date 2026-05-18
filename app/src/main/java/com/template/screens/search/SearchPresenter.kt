@@ -91,6 +91,7 @@ private class SearchStateProvider(
             }
 
             SearchScreen.Event.Search -> performSearch()
+
             SearchScreen.Event.ClearQuery -> {
                 query = ""
                 results.clear()

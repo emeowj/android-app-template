@@ -35,5 +35,4 @@ class EnumPreferencesKey<T : Enum<T>>(val key: Preferences.Key<String>, val defa
 inline fun <reified T : Enum<T>> enumPreferencesKey(
     name: String,
     defaultValue: T,
-): EnumPreferencesKey<T> =
-    EnumPreferencesKey(key = stringPreferencesKey(name), defaultValue = defaultValue)
+): EnumPreferencesKey<T> = EnumPreferencesKey(key = stringPreferencesKey(name), defaultValue = defaultValue)

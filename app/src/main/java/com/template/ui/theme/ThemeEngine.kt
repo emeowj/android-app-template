@@ -42,19 +42,17 @@ object ThemeEngine {
         width: Int? = null,
         grade: Int? = null,
         rond: Int? = null,
-    ): FontFamily {
-        return if (
-            fontFamily.supportsVariableSettings && (width != null || grade != null || rond != null)
-        ) {
-            createVariableFontFamily(
-                fontFamily,
-                width ?: DefaultDisplayFontWidth,
-                grade ?: DefaultDisplayFontGrade,
-                rond ?: DefaultDisplayFontRond,
-            )
-        } else {
-            createStandardFontFamily(fontFamily.fontRes)
-        }
+    ): FontFamily = if (
+        fontFamily.supportsVariableSettings && (width != null || grade != null || rond != null)
+    ) {
+        createVariableFontFamily(
+            fontFamily,
+            width ?: DefaultDisplayFontWidth,
+            grade ?: DefaultDisplayFontGrade,
+            rond ?: DefaultDisplayFontRond,
+        )
+    } else {
+        createStandardFontFamily(fontFamily.fontRes)
     }
 
     private fun createVariableFontFamily(
@@ -62,43 +60,41 @@ object ThemeEngine {
         width: Int,
         grade: Int,
         rond: Int,
-    ): FontFamily =
-        FontFamily(
-            FontWeights.map { weight ->
-                Font(
-                    resId = fontFamily.fontRes,
-                    weight = weight,
-                    variationSettings =
-                        FontVariation.Settings(
-                            *buildList {
-                                add(FontVariation.weight(weight.weight))
-                                fontFamily.getAxisConfig(FontAxis.WIDTH)?.let {
-                                    add(FontVariation.width(width.toFloat()))
-                                }
-                                fontFamily.getAxisConfig(FontAxis.GRADE)?.let {
-                                    add(FontVariation.grade(grade))
-                                }
-                                fontFamily.getAxisConfig(FontAxis.ROND)?.let {
-                                    add(FontVariation.Setting("ROND", rond.toFloat()))
-                                }
+    ): FontFamily = FontFamily(
+        FontWeights.map { weight ->
+            Font(
+                resId = fontFamily.fontRes,
+                weight = weight,
+                variationSettings =
+                    FontVariation.Settings(
+                        *buildList {
+                            add(FontVariation.weight(weight.weight))
+                            fontFamily.getAxisConfig(FontAxis.WIDTH)?.let {
+                                add(FontVariation.width(width.toFloat()))
                             }
-                                .toTypedArray()
-                        ),
-                )
-            }
-        )
+                            fontFamily.getAxisConfig(FontAxis.GRADE)?.let {
+                                add(FontVariation.grade(grade))
+                            }
+                            fontFamily.getAxisConfig(FontAxis.ROND)?.let {
+                                add(FontVariation.Setting("ROND", rond.toFloat()))
+                            }
+                        }
+                            .toTypedArray(),
+                    ),
+            )
+        },
+    )
 
-    private fun createStandardFontFamily(@FontRes fontRes: Int): FontFamily =
-        FontFamily(
-            FontWeights.map { weight ->
-                Font(
-                    resId = fontRes,
-                    weight = weight,
-                    variationSettings =
-                        FontVariation.Settings(FontVariation.weight(weight.weight)),
-                )
-            }
-        )
+    private fun createStandardFontFamily(@FontRes fontRes: Int): FontFamily = FontFamily(
+        FontWeights.map { weight ->
+            Font(
+                resId = fontRes,
+                weight = weight,
+                variationSettings =
+                    FontVariation.Settings(FontVariation.weight(weight.weight)),
+            )
+        },
+    )
 
     fun createTypography(
         sizes: FontSizes,
@@ -179,32 +175,31 @@ fun rememberAppTypography(
     bodyWidth: Int,
     bodyGrade: Int,
     bodyRond: Int,
-): Typography =
-    remember(
-        baseSize,
-        displayFontFamily,
-        bodyFontFamily,
-        displayWidth,
-        displayGrade,
-        displayRond,
-        bodyWidth,
-        bodyGrade,
-        bodyRond,
-    ) {
-        val sizes = ThemeEngine.calculateFontSizes(baseSize)
-        val displayFont =
-            ThemeEngine.createFontFamily(
-                displayFontFamily,
-                if (displayFontFamily.supportsVariableSettings) displayWidth else null,
-                if (displayFontFamily.supportsVariableSettings) displayGrade else null,
-                if (displayFontFamily.supportsVariableSettings) displayRond else null,
-            )
-        val bodyFont =
-            ThemeEngine.createFontFamily(
-                bodyFontFamily,
-                if (bodyFontFamily.supportsVariableSettings) bodyWidth else null,
-                if (bodyFontFamily.supportsVariableSettings) bodyGrade else null,
-                if (bodyFontFamily.supportsVariableSettings) bodyRond else null,
-            )
-        ThemeEngine.createTypography(sizes, displayFont, bodyFont)
-    }
+): Typography = remember(
+    baseSize,
+    displayFontFamily,
+    bodyFontFamily,
+    displayWidth,
+    displayGrade,
+    displayRond,
+    bodyWidth,
+    bodyGrade,
+    bodyRond,
+) {
+    val sizes = ThemeEngine.calculateFontSizes(baseSize)
+    val displayFont =
+        ThemeEngine.createFontFamily(
+            displayFontFamily,
+            if (displayFontFamily.supportsVariableSettings) displayWidth else null,
+            if (displayFontFamily.supportsVariableSettings) displayGrade else null,
+            if (displayFontFamily.supportsVariableSettings) displayRond else null,
+        )
+    val bodyFont =
+        ThemeEngine.createFontFamily(
+            bodyFontFamily,
+            if (bodyFontFamily.supportsVariableSettings) bodyWidth else null,
+            if (bodyFontFamily.supportsVariableSettings) bodyGrade else null,
+            if (bodyFontFamily.supportsVariableSettings) bodyRond else null,
+        )
+    ThemeEngine.createTypography(sizes, displayFont, bodyFont)
+}

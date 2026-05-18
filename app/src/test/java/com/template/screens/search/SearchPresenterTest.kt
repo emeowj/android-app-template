@@ -64,7 +64,7 @@ class SearchPresenterTest {
                     artistName = "Artist",
                     trackName = "Track",
                     wrapperType = "track",
-                )
+                ),
             )
         enqueueResponse(ITunesSearchResponse(1, results))
         val presenter = presenterFactory.create(SearchScreen())

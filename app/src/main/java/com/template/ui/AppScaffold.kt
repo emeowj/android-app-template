@@ -84,12 +84,12 @@ fun AppScaffold(circuit: Circuit, modifier: Modifier = Modifier) {
                 )
 
             val selectedTab by
-            remember(backStack) {
-                derivedStateOf {
-                    val top = backStack.topRecord?.screen
-                    NavigationTab.entries.firstOrNull { it.screen == top }
+                remember(backStack) {
+                    derivedStateOf {
+                        val top = backStack.topRecord?.screen
+                        NavigationTab.entries.firstOrNull { it.screen == top }
+                    }
                 }
-            }
 
             ContentWithOverlays {
                 Scaffold(
@@ -106,7 +106,7 @@ fun AppScaffold(circuit: Circuit, modifier: Modifier = Modifier) {
                     contentWindowInsets = WindowInsets(0),
                 ) { padding ->
                     CompositionLocalProvider(
-                        LocalBottomBarPadding provides padding.calculateBottomPadding()
+                        LocalBottomBarPadding provides padding.calculateBottomPadding(),
                     ) {
                         NavigableCircuitContent(navigator = navigator, backStack = backStack)
                     }

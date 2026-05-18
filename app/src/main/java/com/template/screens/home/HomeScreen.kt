@@ -41,12 +41,11 @@ data object HomeScreen : Screen {
 @CircuitInject(HomeScreen::class, AppScope::class)
 class HomePresenter(private val navigator: Navigator) : Presenter<HomeScreen.State> {
     @Composable
-    override fun present(): HomeScreen.State =
-        HomeScreen.State { event ->
-            when (event) {
-                HomeScreen.Event.ClickSettings -> navigator.goTo(SettingsScreen)
-            }
+    override fun present(): HomeScreen.State = HomeScreen.State { event ->
+        when (event) {
+            HomeScreen.Event.ClickSettings -> navigator.goTo(SettingsScreen)
         }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -68,7 +67,7 @@ fun HomeUi(state: HomeScreen.State, modifier: Modifier = Modifier) {
                 },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
                     ),
             )
         },

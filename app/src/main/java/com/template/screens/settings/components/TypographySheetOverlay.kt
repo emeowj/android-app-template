@@ -58,20 +58,19 @@ import com.template.ui.theme.Padding
 import com.template.ui.theme.ThemeEngine
 import kotlinx.coroutines.launch
 
-fun typographySheetOverlay(): BottomSheetOverlay<Unit, SelectionResult<Unit>> =
-    BottomSheetOverlay(
-        model = Unit,
-        onDismiss = { SelectionResult.Cancelled },
-        skipPartiallyExpandedState = true,
-        dragHandle = {},
-        contentWindowInsets = { WindowInsets(0) }
-    ) { _, _ ->
-        SelectionSheetContent(
-            title = stringResource(R.string.settings_typography_title),
-        ) {
-            ContentWithOverlays { TypographySheetBody() }
-        }
+fun typographySheetOverlay(): BottomSheetOverlay<Unit, SelectionResult<Unit>> = BottomSheetOverlay(
+    model = Unit,
+    onDismiss = { SelectionResult.Cancelled },
+    skipPartiallyExpandedState = true,
+    dragHandle = {},
+    contentWindowInsets = { WindowInsets(0) },
+) { _, _ ->
+    SelectionSheetContent(
+        title = stringResource(R.string.settings_typography_title),
+    ) {
+        ContentWithOverlays { TypographySheetBody() }
     }
+}
 
 @Composable
 private fun TypographySheetBody(modifier: Modifier = Modifier) {
@@ -118,7 +117,7 @@ private fun TypographySheetBody(modifier: Modifier = Modifier) {
                 onClick = {
                     scope.launch { overlayHost.show(pairingBuilderOverlay()) }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
@@ -187,12 +186,18 @@ private fun PairingCard(
         onClick = onClick,
         shape = AppShape.card,
         color =
-            if (selected) MaterialTheme.colorScheme.secondaryContainer
-            else MaterialTheme.colorScheme.surface,
+            if (selected) {
+                MaterialTheme.colorScheme.secondaryContainer
+            } else {
+                MaterialTheme.colorScheme.surface
+            },
         border =
-            if (selected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
-            else null,
-        modifier = modifier
+            if (selected) {
+                BorderStroke(2.dp, MaterialTheme.colorScheme.primary)
+            } else {
+                null
+            },
+        modifier = modifier,
     ) {
         Column(
             modifier = Modifier.padding(Padding.medium),
@@ -204,8 +209,11 @@ private fun PairingCard(
                     fontFamily = fontFamilies[pairing.display],
                 ),
                 color =
-                    if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-                    else MaterialTheme.colorScheme.onSurface,
+                    if (selected) {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
             )
             Text(
                 text = bodyName,
@@ -213,8 +221,11 @@ private fun PairingCard(
                     fontFamily = fontFamilies[pairing.body],
                 ),
                 color =
-                    if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-                    else MaterialTheme.colorScheme.onSurfaceVariant,
+                    if (selected) {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
             )
         }
     }
@@ -237,7 +248,7 @@ private fun AddPairingCard(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(Padding.medium),
-            contentAlignment = Alignment.Center
+            contentAlignment = Alignment.Center,
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_add),
@@ -249,19 +260,18 @@ private fun AddPairingCard(
     }
 }
 
-private fun pairingBuilderOverlay(): BottomSheetOverlay<Unit, SelectionResult<Unit>> =
-    BottomSheetOverlay(
-        model = Unit,
-        onDismiss = { SelectionResult.Cancelled },
-        skipPartiallyExpandedState = true,
-        dragHandle = {},
-    ) { _, _ ->
-        SelectionSheetContent(
-            title = stringResource(R.string.settings_typography_pairing_builder_title),
-        ) {
-            PairingBuilderBody()
-        }
+private fun pairingBuilderOverlay(): BottomSheetOverlay<Unit, SelectionResult<Unit>> = BottomSheetOverlay(
+    model = Unit,
+    onDismiss = { SelectionResult.Cancelled },
+    skipPartiallyExpandedState = true,
+    dragHandle = {},
+) { _, _ ->
+    SelectionSheetContent(
+        title = stringResource(R.string.settings_typography_pairing_builder_title),
+    ) {
+        PairingBuilderBody()
     }
+}
 
 @Composable
 private fun PairingBuilderBody(modifier: Modifier = Modifier) {
@@ -285,7 +295,7 @@ private fun PairingBuilderBody(modifier: Modifier = Modifier) {
                 onClick = {},
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(2f)
+                    .aspectRatio(2f),
             )
         }
 
@@ -349,11 +359,17 @@ private fun FontSuggestionChip(
         onClick = onClick,
         shape = AppShape.listFull,
         color =
-            if (selected) MaterialTheme.colorScheme.secondaryContainer
-            else MaterialTheme.colorScheme.surface,
+            if (selected) {
+                MaterialTheme.colorScheme.secondaryContainer
+            } else {
+                MaterialTheme.colorScheme.surface
+            },
         border =
-            if (selected) BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
-            else BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            if (selected) {
+                BorderStroke(1.dp, MaterialTheme.colorScheme.primary)
+            } else {
+                BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+            },
         modifier = modifier,
     ) {
         Row(
@@ -367,8 +383,11 @@ private fun FontSuggestionChip(
                 style = MaterialTheme.typography.labelLarge.copy(fontFamily = fontFamily),
                 fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
                 color =
-                    if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-                    else MaterialTheme.colorScheme.onSurface,
+                    if (selected) {
+                        MaterialTheme.colorScheme.onSecondaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
             )
         }
     }

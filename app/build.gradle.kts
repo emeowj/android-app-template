@@ -1,5 +1,4 @@
 import java.util.Properties
-
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 val localProperties = Properties().apply {
@@ -83,7 +82,7 @@ kotlin {
                 "androidx.compose.ui.text.ExperimentalTextApi",
                 "kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "kotlin.time.ExperimentalTime",
-            )
+            ),
         )
     }
 }

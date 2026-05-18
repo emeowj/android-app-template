@@ -26,11 +26,10 @@ interface BaseTestGraph {
 
     @Provides
     @SingleIn(AppScope::class)
-    fun provideHttpClient(engine: MockEngine, json: Json): HttpClient =
-        HttpClient(engine) {
-            install(ContentNegotiation) {
-                json(json, contentType = ContentType.Application.Json)
-                json(json, contentType = ContentType.Text.JavaScript)
-            }
+    fun provideHttpClient(engine: MockEngine, json: Json): HttpClient = HttpClient(engine) {
+        install(ContentNegotiation) {
+            json(json, contentType = ContentType.Application.Json)
+            json(json, contentType = ContentType.Text.JavaScript)
         }
+    }
 }

@@ -24,6 +24,7 @@ metro = "0.13.2"
 palette = "1.0.0"
 paparazzi = "2.0.0-alpha04"
 robolectric = "4.16.1"
+spotless = "8.4.0"
 timber = "5.0.1"
 turbine = "1.2.1"
 
@@ -78,3 +79,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 metro = { id = "dev.zacsweers.metro", version.ref = "metro"}
 paparazzi = { id = "app.cash.paparazzi", version.ref = "paparazzi" }
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }

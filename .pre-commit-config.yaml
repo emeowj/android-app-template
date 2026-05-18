@@ -1,0 +1,10 @@
+repos:
+  - repo: local
+    hooks:
+      - id: spotless-apply
+        name: spotlessApply
+        entry: ./gradlew spotlessApply
+        language: system
+        pass_filenames: false
+        files: ^(.+\.gradle\.kts|.+\.kt|.+\.xml|\.editorconfig)$
+        stages: [pre-commit]

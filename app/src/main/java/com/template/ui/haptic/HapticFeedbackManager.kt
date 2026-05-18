@@ -9,9 +9,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.hapticfeedback.HapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType as ComposeHapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType as ComposeHapticFeedbackType
 
 interface HapticFeedbackManager {
     fun performHaptic(type: HapticFeedbackType)
@@ -119,7 +119,7 @@ private class RealHapticFeedbackManager(
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R && vibrator != null) {
             if (vibrator.areAllPrimitivesSupported(primitive)) {
                 vibrator.vibrate(
-                    VibrationEffect.startComposition().addPrimitive(primitive).compose()
+                    VibrationEffect.startComposition().addPrimitive(primitive).compose(),
                 )
                 return
             }

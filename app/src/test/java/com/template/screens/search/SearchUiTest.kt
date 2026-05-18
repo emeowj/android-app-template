@@ -48,7 +48,7 @@ class SearchUiTest {
                                 ),
                             isSearching = false,
                             eventSink = {},
-                        )
+                        ),
                 )
             }
         }
@@ -65,7 +65,7 @@ class SearchUiTest {
                             results = emptyList(),
                             isSearching = true,
                             eventSink = {},
-                        )
+                        ),
                 )
             }
         }

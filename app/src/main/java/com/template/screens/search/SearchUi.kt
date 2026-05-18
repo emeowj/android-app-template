@@ -102,7 +102,7 @@ private fun SearchTopbar(state: SearchScreen.State) {
                         TextFieldValue(
                             text = state.query,
                             selection = TextRange(state.query.length),
-                        )
+                        ),
                     )
                 }
             SearchTextField(
@@ -131,7 +131,7 @@ private fun SearchTopbar(state: SearchScreen.State) {
             Modifier
                 .drawBehind {
                     drawRect(
-                        brush = Brush.verticalGradient(0f to background, 1f to Color.Transparent)
+                        brush = Brush.verticalGradient(0f to background, 1f to Color.Transparent),
                     )
                 }
                 .statusBarsPadding(),
@@ -302,7 +302,7 @@ private fun ResultItem(
                         .size(64.dp)
                         .clip(RoundedCornerShape(AppShape.listFullRadius - Padding.medium))
                         .background(
-                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
                         ),
                 contentScale = ContentScale.Crop,
             )
@@ -356,7 +356,7 @@ private fun SearchUiPreview() {
                         ),
                     isSearching = false,
                     eventSink = {},
-                )
+                ),
         )
     }
 }
