@@ -13,3 +13,5 @@ inline val Color.lighter: Color
 
 inline val Color.light: Color
     get() = copy(alpha = 0.8f)
+
+fun Color.softTint(alpha: Float = 0.14f): Color = copy(alpha = alpha)

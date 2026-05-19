@@ -20,6 +20,8 @@ import com.materialkolor.PaletteStyle
 import com.materialkolor.rememberDynamicColorScheme
 import com.materialkolor.score.Score
 
+private const val SeedColorImageSizePx = 96
+
 @Composable
 fun DynamicTheme(
     model: Any?,
@@ -61,7 +63,7 @@ fun rememberSeedColorFromImage(model: Any?, fallback: Color): Color {
 private suspend fun extractSeedColor(context: Context, model: Any): Color? {
     val request = ImageRequest.Builder(context)
         .data(model)
-        .size(300)
+        .size(SeedColorImageSizePx)
         .allowHardware(false)
         .build()
     val bitmap = when (val result = context.imageLoader.execute(request)) {

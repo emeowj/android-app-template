@@ -6,54 +6,103 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontVariation
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import kotlin.math.pow
 
 object ThemeEngine {
-    private const val TYPOGRAPHY_RATIO = 1.200f
-
     fun calculateFontSizes(baseSize: BaseSize): FontSizes {
-        val base = baseSize.bodySizeSp.toFloat()
-        val ratio = TYPOGRAPHY_RATIO
+        val scale = baseSize.bodySizeSp / BaseSize.MEDIUM.bodySizeSp.toFloat()
         return FontSizes(
-            labelSmall = (base / ratio.pow(2)).sp,
-            labelMedium = (base / ratio.pow(1.5f)).sp,
-            labelLarge = (base / ratio).sp,
-            bodySmall = (base / ratio.pow(0.5f)).sp,
-            bodyMedium = base.sp,
-            bodyLarge = (base * ratio.pow(0.5f)).sp,
-            titleSmall = (base * ratio).sp,
-            titleMedium = (base * ratio.pow(1.5f)).sp,
-            titleLarge = (base * ratio.pow(2)).sp,
-            headlineSmall = (base * ratio.pow(2.5f)).sp,
-            headlineMedium = (base * ratio.pow(3)).sp,
-            headlineLarge = (base * ratio.pow(3.5f)).sp,
-            displaySmall = (base * ratio.pow(4)).sp,
-            displayMedium = (base * ratio.pow(4.5f)).sp,
-            displayLarge = (base * ratio.pow(5)).sp,
+            labelSmall = scaledSp(11f, scale),
+            labelMedium = scaledSp(12f, scale),
+            labelLarge = scaledSp(14f, scale),
+            bodySmall = scaledSp(13f, scale),
+            bodyMedium = scaledSp(15f, scale),
+            bodyLarge = scaledSp(17f, scale),
+            titleSmall = scaledSp(14f, scale),
+            titleMedium = scaledSp(16f, scale),
+            titleLarge = scaledSp(22f, scale),
+            headlineSmall = scaledSp(24f, scale),
+            headlineMedium = scaledSp(28f, scale),
+            headlineLarge = scaledSp(32f, scale),
+            displaySmall = scaledSp(36f, scale),
+            displayMedium = scaledSp(45f, scale),
+            displayLarge = scaledSp(57f, scale),
         )
     }
+
+    private fun scaledSp(value: Float, scale: Float): TextUnit = (value * scale).sp
 
     fun createFontFamily(
         fontFamily: AppFontFamily,
         width: Int? = null,
         grade: Int? = null,
         rond: Int? = null,
-    ): FontFamily = if (
-        fontFamily.supportsVariableSettings && (width != null || grade != null || rond != null)
-    ) {
-        createVariableFontFamily(
-            fontFamily,
-            width ?: DefaultDisplayFontWidth,
-            grade ?: DefaultDisplayFontGrade,
-            rond ?: DefaultDisplayFontRond,
-        )
-    } else {
-        createStandardFontFamily(fontFamily.fontRes)
+    ): FontFamily {
+        if (fontFamily.fontResources.isNotEmpty()) {
+            return createResourceFontFamily(fontFamily, width, grade, rond)
+        }
+
+        return if (
+            fontFamily.supportsVariableSettings && (width != null || grade != null || rond != null)
+        ) {
+            createVariableFontFamily(
+                fontFamily,
+                width ?: FontAxisConfig.DEFAULT_DISPLAY_WIDTH,
+                grade ?: FontAxisConfig.DEFAULT_DISPLAY_GRADE,
+                rond ?: FontAxisConfig.DEFAULT_DISPLAY_ROND,
+            )
+        } else {
+            createStandardFontFamily(fontFamily.fontRes)
+        }
     }
+
+    private fun createResourceFontFamily(
+        fontFamily: AppFontFamily,
+        width: Int?,
+        grade: Int?,
+        rond: Int?,
+    ): FontFamily = FontFamily(
+        fontFamily.fontResources.map { resource ->
+            val settings =
+                buildList {
+                    if (resource.supportsWeightAxis) {
+                        add(FontVariation.weight(resource.weight.weight))
+                    }
+                    fontFamily.getAxisConfig(FontAxis.WIDTH)?.let {
+                        add(FontVariation.width((width ?: it.default.toInt()).toFloat()))
+                    }
+                    fontFamily.getAxisConfig(FontAxis.GRADE)?.let {
+                        add(FontVariation.grade(grade ?: it.default.toInt()))
+                    }
+                    fontFamily.getAxisConfig(FontAxis.ROND)?.let {
+                        add(
+                            FontVariation.Setting(
+                                "ROND",
+                                (rond ?: it.default.toInt()).toFloat(),
+                            ),
+                        )
+                    }
+                }
+            if (settings.isEmpty()) {
+                Font(
+                    resId = resource.fontRes,
+                    weight = resource.weight,
+                    style = resource.style,
+                )
+            } else {
+                Font(
+                    resId = resource.fontRes,
+                    weight = resource.weight,
+                    style = resource.style,
+                    variationSettings = FontVariation.Settings(*settings.toTypedArray()),
+                )
+            }
+        },
+    )
 
     private fun createVariableFontFamily(
         fontFamily: AppFontFamily,
@@ -65,6 +114,7 @@ object ThemeEngine {
             Font(
                 resId = fontFamily.fontRes,
                 weight = weight,
+                style = FontStyle.Normal,
                 variationSettings =
                     FontVariation.Settings(
                         *buildList {
@@ -102,37 +152,38 @@ object ThemeEngine {
         bodyFontFamily: FontFamily,
     ): Typography {
         val base = Typography()
+        fun TextUnit.lineHeight(multiplier: Float): TextUnit = (value * multiplier).sp
         return Typography(
-            displayLarge = base.displayLarge.copy(fontFamily = displayFontFamily, fontSize = sizes.displayLarge),
-            displayLargeEmphasized = base.displayLargeEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.displayLarge),
-            displayMedium = base.displayMedium.copy(fontFamily = displayFontFamily, fontSize = sizes.displayMedium),
-            displayMediumEmphasized = base.displayMediumEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.displayMedium),
-            displaySmall = base.displaySmall.copy(fontFamily = displayFontFamily, fontSize = sizes.displaySmall),
-            displaySmallEmphasized = base.displaySmallEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.displaySmall),
-            headlineLarge = base.headlineLarge.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineLarge),
-            headlineLargeEmphasized = base.headlineLargeEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineLarge),
-            headlineMedium = base.headlineMedium.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineMedium),
-            headlineMediumEmphasized = base.headlineMediumEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineMedium),
-            headlineSmall = base.headlineSmall.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineSmall),
-            headlineSmallEmphasized = base.headlineSmallEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineSmall),
-            titleLarge = base.titleLarge.copy(fontFamily = displayFontFamily, fontSize = sizes.titleLarge),
-            titleLargeEmphasized = base.titleLargeEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.titleLarge),
-            titleMedium = base.titleMedium.copy(fontFamily = displayFontFamily, fontSize = sizes.titleMedium),
-            titleMediumEmphasized = base.titleMediumEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.titleMedium),
-            titleSmall = base.titleSmall.copy(fontFamily = displayFontFamily, fontSize = sizes.titleSmall),
-            titleSmallEmphasized = base.titleSmallEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.titleSmall),
-            bodyLarge = base.bodyLarge.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodyLarge),
-            bodyLargeEmphasized = base.bodyLargeEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodyLarge),
-            bodyMedium = base.bodyMedium.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodyMedium),
-            bodyMediumEmphasized = base.bodyMediumEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodyMedium),
-            bodySmall = base.bodySmall.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodySmall),
-            bodySmallEmphasized = base.bodySmallEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodySmall),
-            labelLarge = base.labelLarge.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelLarge),
-            labelLargeEmphasized = base.labelLargeEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelLarge),
-            labelMedium = base.labelMedium.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelMedium),
-            labelMediumEmphasized = base.labelMediumEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelMedium),
-            labelSmall = base.labelSmall.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelSmall),
-            labelSmallEmphasized = base.labelSmallEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelSmall),
+            displayLarge = base.displayLarge.copy(fontFamily = displayFontFamily, fontSize = sizes.displayLarge, fontWeight = FontWeight.Normal, lineHeight = sizes.displayLarge.lineHeight(1.05f), letterSpacing = 0.sp),
+            displayLargeEmphasized = base.displayLargeEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.displayLarge, fontWeight = FontWeight.Normal, lineHeight = sizes.displayLarge.lineHeight(1.05f), letterSpacing = 0.sp),
+            displayMedium = base.displayMedium.copy(fontFamily = displayFontFamily, fontSize = sizes.displayMedium, fontWeight = FontWeight.Normal, lineHeight = sizes.displayMedium.lineHeight(1.05f), letterSpacing = 0.sp),
+            displayMediumEmphasized = base.displayMediumEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.displayMedium, fontWeight = FontWeight.Normal, lineHeight = sizes.displayMedium.lineHeight(1.05f), letterSpacing = 0.sp),
+            displaySmall = base.displaySmall.copy(fontFamily = displayFontFamily, fontSize = sizes.displaySmall, fontWeight = FontWeight.Medium, lineHeight = sizes.displaySmall.lineHeight(1.10f), letterSpacing = 0.sp),
+            displaySmallEmphasized = base.displaySmallEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.displaySmall, fontWeight = FontWeight.Medium, lineHeight = sizes.displaySmall.lineHeight(1.10f), letterSpacing = 0.sp),
+            headlineLarge = base.headlineLarge.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineLarge, fontWeight = FontWeight.Medium, lineHeight = sizes.headlineLarge.lineHeight(1.15f), letterSpacing = 0.sp),
+            headlineLargeEmphasized = base.headlineLargeEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineLarge, fontWeight = FontWeight.Medium, lineHeight = sizes.headlineLarge.lineHeight(1.15f), letterSpacing = 0.sp),
+            headlineMedium = base.headlineMedium.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineMedium, fontWeight = FontWeight.Medium, lineHeight = sizes.headlineMedium.lineHeight(1.15f), letterSpacing = 0.sp),
+            headlineMediumEmphasized = base.headlineMediumEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineMedium, fontWeight = FontWeight.Medium, lineHeight = sizes.headlineMedium.lineHeight(1.15f), letterSpacing = 0.sp),
+            headlineSmall = base.headlineSmall.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineSmall, fontWeight = FontWeight.Medium, lineHeight = sizes.headlineSmall.lineHeight(1.20f), letterSpacing = 0.sp),
+            headlineSmallEmphasized = base.headlineSmallEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.headlineSmall, fontWeight = FontWeight.Medium, lineHeight = sizes.headlineSmall.lineHeight(1.20f), letterSpacing = 0.sp),
+            titleLarge = base.titleLarge.copy(fontFamily = displayFontFamily, fontSize = sizes.titleLarge, fontWeight = FontWeight.Medium, lineHeight = sizes.titleLarge.lineHeight(1.25f), letterSpacing = 0.sp),
+            titleLargeEmphasized = base.titleLargeEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.titleLarge, fontWeight = FontWeight.Medium, lineHeight = sizes.titleLarge.lineHeight(1.25f), letterSpacing = 0.sp),
+            titleMedium = base.titleMedium.copy(fontFamily = displayFontFamily, fontSize = sizes.titleMedium, fontWeight = FontWeight.Medium, lineHeight = sizes.titleMedium.lineHeight(1.30f), letterSpacing = 0.sp),
+            titleMediumEmphasized = base.titleMediumEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.titleMedium, fontWeight = FontWeight.Medium, lineHeight = sizes.titleMedium.lineHeight(1.30f), letterSpacing = 0.sp),
+            titleSmall = base.titleSmall.copy(fontFamily = displayFontFamily, fontSize = sizes.titleSmall, fontWeight = FontWeight.SemiBold, lineHeight = sizes.titleSmall.lineHeight(1.30f), letterSpacing = 0.1.sp),
+            titleSmallEmphasized = base.titleSmallEmphasized.copy(fontFamily = displayFontFamily, fontSize = sizes.titleSmall, fontWeight = FontWeight.SemiBold, lineHeight = sizes.titleSmall.lineHeight(1.30f), letterSpacing = 0.1.sp),
+            bodyLarge = base.bodyLarge.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodyLarge, fontWeight = FontWeight.Normal, lineHeight = sizes.bodyLarge.lineHeight(1.55f), letterSpacing = 0.sp),
+            bodyLargeEmphasized = base.bodyLargeEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodyLarge, fontWeight = FontWeight.Medium, lineHeight = sizes.bodyLarge.lineHeight(1.55f), letterSpacing = 0.sp),
+            bodyMedium = base.bodyMedium.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodyMedium, fontWeight = FontWeight.Normal, lineHeight = sizes.bodyMedium.lineHeight(1.50f), letterSpacing = 0.sp),
+            bodyMediumEmphasized = base.bodyMediumEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodyMedium, fontWeight = FontWeight.Medium, lineHeight = sizes.bodyMedium.lineHeight(1.50f), letterSpacing = 0.sp),
+            bodySmall = base.bodySmall.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodySmall, fontWeight = FontWeight.Normal, lineHeight = sizes.bodySmall.lineHeight(1.45f), letterSpacing = 0.sp),
+            bodySmallEmphasized = base.bodySmallEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.bodySmall, fontWeight = FontWeight.Medium, lineHeight = sizes.bodySmall.lineHeight(1.45f), letterSpacing = 0.sp),
+            labelLarge = base.labelLarge.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelLarge, fontWeight = FontWeight.SemiBold, lineHeight = sizes.labelLarge.lineHeight(1.20f), letterSpacing = 0.1.sp),
+            labelLargeEmphasized = base.labelLargeEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelLarge, fontWeight = FontWeight.SemiBold, lineHeight = sizes.labelLarge.lineHeight(1.20f), letterSpacing = 0.1.sp),
+            labelMedium = base.labelMedium.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelMedium, fontWeight = FontWeight.SemiBold, lineHeight = sizes.labelMedium.lineHeight(1.20f), letterSpacing = 0.4.sp),
+            labelMediumEmphasized = base.labelMediumEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelMedium, fontWeight = FontWeight.SemiBold, lineHeight = sizes.labelMedium.lineHeight(1.20f), letterSpacing = 0.4.sp),
+            labelSmall = base.labelSmall.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelSmall, fontWeight = FontWeight.SemiBold, lineHeight = sizes.labelSmall.lineHeight(1.20f), letterSpacing = 1.5.sp),
+            labelSmallEmphasized = base.labelSmallEmphasized.copy(fontFamily = bodyFontFamily, fontSize = sizes.labelSmall, fontWeight = FontWeight.SemiBold, lineHeight = sizes.labelSmall.lineHeight(1.20f), letterSpacing = 1.5.sp),
         )
     }
 

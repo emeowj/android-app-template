@@ -13,12 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,9 +25,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.slack.circuitx.overlays.BottomSheetOverlay
+import com.template.ui.components.sheets.AppSheetHeader
+import com.template.ui.components.sheets.AppSheetSurface
+import com.template.ui.components.sheets.appBottomSheetOverlay
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
 import com.template.ui.theme.AppShape
+import com.template.ui.theme.LocalColorRoles
 import com.template.ui.theme.Padding
 
 data class ChoiceOption<T>(
@@ -51,25 +53,34 @@ fun SelectionSheetContent(
     footer: @Composable (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    Surface(color = MaterialTheme.colorScheme.surfaceContainer, modifier = modifier) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(Padding.small),
+    ) {
+        AppSheetHeader(title = title)
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(Padding.small),
+            modifier = Modifier
+                .navigationBarsPadding()
+                .weight(1f, fill = false),
         ) {
-            CenterAlignedTopAppBar(
-                title = { Text(text = title, fontWeight = FontWeight.Bold) },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    ),
-            )
-
             content()
-
             if (footer != null) {
                 footer()
             }
         }
+    }
+}
+
+@Composable
+private fun SelectionSheetPreviewSurface(
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    AppSheetSurface {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(Padding.small),
+            content = content,
+        )
     }
 }
 
@@ -85,11 +96,9 @@ fun <T> selectionSheetOverlay(
     @StringRes titleRes: Int,
     selected: T,
     content: @Composable (selected: T, onSelect: (T) -> Unit) -> Unit,
-): BottomSheetOverlay<Unit, SelectionResult<T>> = BottomSheetOverlay(
+): BottomSheetOverlay<Unit, SelectionResult<T>> = appBottomSheetOverlay(
     model = Unit,
     onDismiss = { SelectionResult.Cancelled },
-    skipPartiallyExpandedState = true,
-    dragHandle = {},
 ) { _, navigator ->
     SelectionSheetContent(title = stringResource(titleRes)) {
         content(selected) { navigator.finish(SelectionResult.Selected(it)) }
@@ -113,7 +122,7 @@ fun <T> RadioListSelectionContent(
     LazyColumn(
         modifier = modifier
             .padding(horizontal = Padding.small)
-            .navigationBarsPadding(),
+            .padding(bottom = Padding.medium),
         verticalArrangement = Arrangement.spacedBy(Padding.hairline),
     ) {
         itemsIndexed(items = options) { index, option ->
@@ -154,11 +163,7 @@ fun <T> RadioListSelectionContent(
         }
 
         item(key = "spacer") {
-            Spacer(
-                modifier = Modifier
-                    .navigationBarsPadding()
-                    .padding(bottom = Padding.medium),
-            )
+            Spacer(modifier = Modifier.padding(bottom = Padding.medium))
         }
     }
 }
@@ -167,17 +172,19 @@ fun <T> RadioListSelectionContent(
 @ThemePreviews
 private fun SelectionSheetPreview() {
     AppPreview {
-        SelectionSheetContent(title = "Selection Title") {
-            RadioListSelectionContent(
-                options =
-                    listOf(
-                        ChoiceOption(1, "Option 1"),
-                        ChoiceOption(2, "Option 2"),
-                        ChoiceOption(3, "Option 3"),
-                    ),
-                selected = 1,
-                onSelect = {},
-            )
+        SelectionSheetPreviewSurface {
+            SelectionSheetContent(title = "Selection Title") {
+                RadioListSelectionContent(
+                    options =
+                        listOf(
+                            ChoiceOption(1, "Option 1"),
+                            ChoiceOption(2, "Option 2"),
+                            ChoiceOption(3, "Option 3"),
+                        ),
+                    selected = 1,
+                    onSelect = {},
+                )
+            }
         }
     }
 }

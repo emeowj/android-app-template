@@ -7,16 +7,29 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 
 object AppShape {
-    val listFullRadius = 24.dp
-    val listMiddleRadius = 8.dp
-    val buttonRadius = 12.dp
-    val cardRadius = 16.dp
-    val cardInnerRadius = 8.dp
-    val dialogRadius = 24.dp
-    val chipRadius = 8.dp
-    val inputRadius = 12.dp
-    val sheetRadius = 24.dp
+    val extraSmallRadius = 6.dp
+    val smallRadius = 10.dp
+    val mediumRadius = 16.dp
+    val largeRadius = 24.dp
+    val extraLargeRadius = 32.dp
+    val pillRadius = 999.dp
 
+    val listFullRadius = largeRadius
+    val listMiddleRadius = extraSmallRadius
+    val buttonRadius = smallRadius
+    val cardRadius = mediumRadius
+    val cardInnerRadius = extraSmallRadius
+    val dialogRadius = largeRadius
+    val chipRadius = extraSmallRadius
+    val inputRadius = smallRadius
+    val sheetRadius = largeRadius
+
+    val extraSmall: Shape = RoundedCornerShape(extraSmallRadius)
+    val small: Shape = RoundedCornerShape(smallRadius)
+    val medium: Shape = RoundedCornerShape(mediumRadius)
+    val large: Shape = RoundedCornerShape(largeRadius)
+    val extraLarge: Shape = RoundedCornerShape(extraLargeRadius)
+    val pill: Shape = RoundedCornerShape(pillRadius)
     val listFull: Shape = RoundedCornerShape(listFullRadius)
     val listMiddle: Shape = RoundedCornerShape(listMiddleRadius)
     val listTop: Shape =
@@ -58,9 +71,9 @@ object AppShape {
 }
 
 fun appMaterialShapes(): Shapes = Shapes(
-    extraSmall = AppShape.chip as CornerBasedShape,
-    small = AppShape.input as CornerBasedShape,
-    medium = AppShape.card as CornerBasedShape,
-    large = AppShape.dialog as CornerBasedShape,
-    extraLarge = AppShape.sheet as CornerBasedShape,
+    extraSmall = AppShape.extraSmall as CornerBasedShape,
+    small = AppShape.small as CornerBasedShape,
+    medium = AppShape.medium as CornerBasedShape,
+    large = AppShape.large as CornerBasedShape,
+    extraLarge = AppShape.extraLarge as CornerBasedShape,
 )

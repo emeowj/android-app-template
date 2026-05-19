@@ -15,28 +15,43 @@
     <string name="settings_title">Settings</string>
     <string name="settings_appearance_section">Appearance</string>
     <string name="settings_behavior_section">Behavior</string>
+    <string name="settings_look_section">LOOK</string>
 
-    <string name="settings_dark_mode_title">Dark Mode</string>
+    <string name="settings_dark_mode_title">Mode</string>
     <string name="settings_dark_mode_system">System Default</string>
     <string name="settings_dark_mode_light">Light</string>
     <string name="settings_dark_mode_dark">Dark</string>
+    <string name="appearance_mode_system">System</string>
+    <string name="appearance_mode_system_subtitle">Match device</string>
+    <string name="appearance_mode_light_subtitle">Light mode</string>
+    <string name="appearance_mode_dark_subtitle">Dark mode</string>
+    <string name="settings_dark_mode_sheet_heading">Light or dark mode</string>
 
-    <string name="settings_colors_title">Colors</string>
-    <string name="settings_dynamic_color_title">Dynamic Color</string>
-    <string name="color_preset_teal">Teal</string>
-    <string name="color_preset_cyan">Cyan</string>
-    <string name="color_preset_gold">Gold</string>
-    <string name="color_preset_pink">Pink</string>
-    <string name="color_preset_indigo">Indigo</string>
-    <string name="color_preset_forest">Forest</string>
-
-    <string name="settings_typography_title">Typography</string>
+    <string name="settings_palette_title">Palette</string>
+    <string name="settings_palette_sheet_heading">Choose a color palette</string>
+    <string name="color_preset_midnight">Midnight</string>
+    <string name="color_preset_sage">Sage</string>
+    <string name="color_preset_ink">Ink</string>
+    <string name="color_preset_clay">Clay</string>
+    <string name="settings_typography_title">Type</string>
     <string name="settings_typography_size_label">Size</string>
+    <string name="settings_typography_size_sheet_heading">Type scale</string>
     <string name="settings_typography_fonts_label">Fonts</string>
+    <string name="settings_type_pairing_title">Type Pairing</string>
+    <string name="settings_type_pairing_heading">Display + body fonts</string>
+    <string name="settings_type_pairing_hint">Swipe through the pairings or tap the Custom card to build your own.</string>
+    <string name="settings_type_pairing_custom_label">CUSTOM</string>
+    <string name="settings_type_summary">%1$s + %2$s</string>
+    <string name="settings_font_hanken_short">Hanken</string>
+    <string name="settings_font_cormorant_short">Cormorant</string>
+    <string name="settings_font_plex_short">Plex</string>
+    <string name="settings_font_averia_short">Averia</string>
     <string name="settings_typography_pairing_builder_title">Custom Pairing</string>
     <string name="settings_typography_add_pairing_cd">Create custom pairing</string>
 
     <string name="settings_base_size_title">Base Size</string>
+    <string name="settings_base_size_sample">Aa</string>
+    <string name="settings_base_size_sp_value">%1$dsp</string>
     <string name="base_size_small">Small</string>
     <string name="base_size_medium">Medium</string>
     <string name="base_size_large">Large</string>
@@ -50,13 +65,27 @@
     <string name="font_fascinate">Fascinate</string>
     <string name="font_lobster">Lobster</string>
     <string name="font_roboto_serif">Roboto Serif</string>
+    <string name="font_figtree">Figtree</string>
+    <string name="font_averia_serif_libre">Averia Serif Libre</string>
+    <string name="font_fraunces">Fraunces</string>
+    <string name="font_inter">Inter</string>
+    <string name="font_cormorant_garamond">Cormorant Garamond</string>
+    <string name="font_ibm_plex_sans">IBM Plex Sans</string>
+    <string name="appearance_preview_title">Sample</string>
+    <string name="appearance_preview_progress">Reusable interface preview</string>
+    <string name="appearance_preview_stat_count">24</string>
+    <string name="appearance_preview_stat_label">ITEMS</string>
+    <string name="appearance_type_sample">Design systems keep interface choices consistent across screens.</string>
 
     <string name="settings_haptic_feedback_title">Haptic Feedback</string>
+    <string name="settings_on">On</string>
+    <string name="settings_off">Off</string>
 
     <!-- Search Screen -->
     <string name="search_title">Search</string>
     <string name="search_hint">Search iTunes…</string>
     <string name="search_empty_hint">Search for music, podcasts, and more</string>
+    <string name="search_clear_cd">Clear search</string>
     <string name="no_results">No results found</string>
 
     <!-- Overlays -->

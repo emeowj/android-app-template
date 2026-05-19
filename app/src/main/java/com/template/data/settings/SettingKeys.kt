@@ -10,13 +10,11 @@ import com.template.ui.theme.BaseSize
 val DarkModeKey = enumPreferencesKey("darkMode", DarkMode.SYSTEM)
 val HapticFeedbackEnabledKey = booleanPreferencesKey("hapticFeedbackEnabled")
 
-val UseDynamicColorKey = booleanPreferencesKey("useDynamicColor")
 val ColorPresetIdKey = stringPreferencesKey("colorPresetId")
-val SeedColorKey = intPreferencesKey("seedColor")
 
 val BaseSizeKey = enumPreferencesKey("baseSize", BaseSize.DEFAULT)
-val DisplayFontFamilyKey = enumPreferencesKey("displayFontFamily", AppFontFamily.DEFAULT)
-val BodyFontFamilyKey = enumPreferencesKey("bodyFontFamily", AppFontFamily.DEFAULT)
+val DisplayFontFamilyKey = enumPreferencesKey("displayFontFamily", AppFontFamily.DEFAULT_DISPLAY)
+val BodyFontFamilyKey = enumPreferencesKey("bodyFontFamily", AppFontFamily.DEFAULT_BODY)
 val DisplayFontWidthKey = intPreferencesKey("displayFontWidth")
 val DisplayFontGradeKey = intPreferencesKey("displayFontGrade")
 val DisplayFontRondKey = intPreferencesKey("displayFontRond")
