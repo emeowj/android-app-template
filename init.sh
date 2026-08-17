@@ -21,6 +21,7 @@ NC='\033[0m'
 OLD_PACKAGE="com.template"
 OLD_APP_CLASS="TemplateApplication"
 OLD_APP_LABEL="Template"
+OLD_THEME="TemplateTheme"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 APP_DIR="$SCRIPT_DIR/app"
@@ -49,6 +50,7 @@ fi
 
 LAST_SEGMENT="${NEW_PACKAGE##*.}"
 NEW_APP_CLASS="$(echo "${LAST_SEGMENT:0:1}" | tr '[:lower:]' '[:upper:]')${LAST_SEGMENT:1}Application"
+NEW_THEME="${NEW_APP_CLASS%Application}Theme"
 
 # ---------------------------------------------------------------------------
 # Step 2: collect app display name
@@ -191,6 +193,7 @@ echo -e "${GREEN}Renaming template${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo -e "Package:      ${YELLOW}$OLD_PACKAGE${NC} -> ${YELLOW}$NEW_PACKAGE${NC}"
 echo -e "App class:    ${YELLOW}$OLD_APP_CLASS${NC} -> ${YELLOW}$NEW_APP_CLASS${NC}"
+echo -e "Theme:        ${YELLOW}$OLD_THEME${NC} -> ${YELLOW}$NEW_THEME${NC}"
 echo -e "Display name: ${YELLOW}$OLD_APP_LABEL${NC} -> ${YELLOW}$NEW_APP_LABEL${NC}"
 echo ""
 
@@ -202,6 +205,10 @@ sed -i '' "s/namespace = \"$OLD_PACKAGE\"/namespace = \"$NEW_PACKAGE\"/" "$APP_D
 sed -i '' "s/applicationId = \"$OLD_PACKAGE\"/applicationId = \"$NEW_PACKAGE\"/" "$APP_DIR/build.gradle.kts"
 echo -e "${GREEN}  ✓ Updated app/build.gradle.kts${NC}"
 
+echo -e "${YELLOW}Updating settings.gradle.kts...${NC}"
+sed -i '' "s/rootProject.name = \"android-app-template\"/rootProject.name = \"$NEW_APP_LABEL\"/" "$SCRIPT_DIR/settings.gradle.kts"
+echo -e "${GREEN}  ✓ Updated settings.gradle.kts${NC}"
+
 echo -e "${YELLOW}Updating package declarations and imports...${NC}"
 update_source_files() {
     local src_dir="$1"
@@ -210,6 +217,7 @@ update_source_files() {
             sed -i '' "s/^package $OLD_PACKAGE/package $NEW_PACKAGE/" "$file"
             sed -i '' "s/import $OLD_PACKAGE/import $NEW_PACKAGE/g" "$file"
             sed -i '' "s/$OLD_APP_CLASS/$NEW_APP_CLASS/g" "$file"
+            sed -i '' "s/$OLD_THEME/$NEW_THEME/g" "$file"
             echo -e "${GREEN}  ✓ ${file#$SCRIPT_DIR/}${NC}"
         done
     fi
