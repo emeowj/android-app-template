@@ -122,11 +122,6 @@ fun AppTopBar(
             label = "TopBarTitleOffset",
         )
     val density = LocalDensity.current
-    val scrollBehavior =
-        MaterialTopAppBarDefaults.pinnedScrollBehavior(
-            isScrollingContentAtStart = { !solid },
-        )
-
     TopAppBar(
         title = {
             Text(
@@ -179,7 +174,6 @@ fun AppTopBar(
                 titleContentColor = colors.ink,
                 actionIconContentColor = colors.ink,
             ),
-        scrollBehavior = scrollBehavior,
         contentPadding = PaddingValues(horizontal = TopBarDefaults.ContentHorizontalPadding),
     )
 }

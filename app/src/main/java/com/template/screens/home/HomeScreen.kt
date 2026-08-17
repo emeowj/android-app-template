@@ -27,6 +27,9 @@ import com.template.screens.settings.SettingsScreen
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
 import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.Assisted
+import dev.zacsweers.metro.AssistedFactory
+import dev.zacsweers.metro.AssistedInject
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -38,8 +41,14 @@ data object HomeScreen : Screen {
     }
 }
 
-@CircuitInject(HomeScreen::class, AppScope::class)
-class HomePresenter(private val navigator: Navigator) : Presenter<HomeScreen.State> {
+@AssistedInject
+class HomePresenter(@Assisted private val navigator: Navigator) : Presenter<HomeScreen.State> {
+    @CircuitInject(HomeScreen::class, AppScope::class)
+    @AssistedFactory
+    fun interface Factory {
+        fun create(navigator: Navigator): HomePresenter
+    }
+
     @Composable
     override fun present(): HomeScreen.State = HomeScreen.State { event ->
         when (event) {
