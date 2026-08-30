@@ -1,49 +1,53 @@
 package com.template.ui.theme
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialExpressiveTheme
 import androidx.compose.material3.Typography
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.template.data.settings.BaseSizeKey
-import com.template.data.settings.BodyFontFamilyKey
-import com.template.data.settings.BodyFontGradeKey
-import com.template.data.settings.BodyFontRondKey
-import com.template.data.settings.BodyFontWidthKey
-import com.template.data.settings.ColorPresetIdKey
 import com.template.data.settings.DarkMode
 import com.template.data.settings.DarkModeKey
-import com.template.data.settings.DisplayFontFamilyKey
-import com.template.data.settings.DisplayFontGradeKey
-import com.template.data.settings.DisplayFontRondKey
-import com.template.data.settings.DisplayFontWidthKey
+import com.template.data.settings.DensityKey
+import com.template.data.settings.DynamicColorEnabledKey
+import com.template.data.settings.TypePairingKey
 import com.template.data.settings.rememberEnumPreference
 import com.template.data.settings.rememberPreference
 
 val LocalColorRoles = compositionLocalOf { ColorPreset.DEFAULT.roles(isDark = false) }
 
 @Composable
-fun TemplateTheme(
-    typography: Typography? = null,
-    darkTheme: Boolean? = null,
-    colorScheme: ColorScheme? = null,
-    colorRoles: ColorRoles? = null,
+fun AppTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    pairing: AppTypePairing = AppTypePairing.Editorial,
+    density: AppDensity = AppDensity.Comfortable,
+    colors: AppColors = if (darkTheme) AppColors.Dark else AppColors.Light,
+    typography: AppTypography = AppTypography.create(pairing),
+    shapes: AppShapes = AppShapes(),
+    materialColorScheme: ColorScheme? = null,
+    materialTypography: Typography? = null,
     content: @Composable () -> Unit,
 ) {
-    val resolvedDarkTheme = darkTheme ?: darkThemeFromSettings()
-    val resolvedColorRoles = colorRoles ?: colorRolesFromSettings(resolvedDarkTheme)
-    val resolvedColorScheme =
-        colorScheme ?: resolvedColorRoles.toMaterialColorScheme(resolvedDarkTheme)
-    val resolvedTypography = typography ?: typographyFromSettings()
+    val resolvedColorScheme = materialColorScheme ?: colors.toMaterialColorScheme()
+    val resolvedTypography = materialTypography ?: typography.toMaterialTypography()
+    val legacyColorRoles = colors.toColorRoles()
 
-    CompositionLocalProvider(LocalColorRoles provides resolvedColorRoles) {
+    CompositionLocalProvider(
+        LocalAppColors provides colors,
+        LocalAppTypography provides typography,
+        LocalAppShapes provides shapes,
+        LocalAppDensity provides AppDensityTokens(density),
+        LocalAppTypePairing provides pairing,
+        LocalColorRoles provides legacyColorRoles,
+    ) {
         MaterialExpressiveTheme(
             colorScheme = resolvedColorScheme,
             typography = resolvedTypography,
@@ -53,6 +57,101 @@ fun TemplateTheme(
     }
 }
 
+object AppTheme {
+    val colors: AppColors
+        @Composable
+        get() = LocalAppColors.current
+
+    val typography: AppTypography
+        @Composable
+        get() = LocalAppTypography.current
+
+    val shapes: AppShapes
+        @Composable
+        get() = LocalAppShapes.current
+
+    val density: AppDensityTokens
+        @Composable
+        get() = LocalAppDensity.current
+
+    val pairing: AppTypePairing
+        @Composable
+        get() = LocalAppTypePairing.current
+}
+
+@Composable
+fun TemplateTheme(
+    typography: Typography? = null,
+    darkTheme: Boolean? = null,
+    colorScheme: ColorScheme? = null,
+    colorRoles: ColorRoles? = null,
+    colors: AppColors? = null,
+    pairing: AppTypePairing? = null,
+    density: AppDensity? = null,
+    content: @Composable () -> Unit,
+) {
+    val resolvedDarkTheme = darkTheme ?: darkThemeFromSettings()
+    val resolvedColors = colors ?: if (resolvedDarkTheme) AppColors.Dark else AppColors.Light
+    val settingsPairing by rememberEnumPreference(TypePairingKey)
+    val settingsDensity by rememberEnumPreference(DensityKey)
+    val resolvedPairing = pairing ?: settingsPairing
+    val resolvedDensity = density ?: settingsDensity
+    val dynamicColor by rememberPreference(DynamicColorEnabledKey, false)
+    val context = LocalContext.current
+
+    val resolvedColorScheme = colorScheme ?: if (dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (resolvedDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    } else {
+        null
+    }
+
+    AppTheme(
+        darkTheme = resolvedDarkTheme,
+        pairing = resolvedPairing,
+        density = resolvedDensity,
+        colors = resolvedColors,
+        materialColorScheme = resolvedColorScheme,
+        materialTypography = typography,
+        content = content,
+    )
+}
+
+@Composable
+fun MuralTheme(
+    typography: Typography? = null,
+    darkTheme: Boolean? = null,
+    colorScheme: ColorScheme? = null,
+    colorRoles: ColorRoles? = null,
+    colors: AppColors? = null,
+    pairing: AppTypePairing? = null,
+    density: AppDensity? = null,
+    content: @Composable () -> Unit,
+) = TemplateTheme(
+    typography = typography,
+    darkTheme = darkTheme,
+    colorScheme = colorScheme,
+    colorRoles = colorRoles,
+    colors = colors,
+    pairing = pairing,
+    density = density,
+    content = content,
+)
+
+fun AppColors.toColorRoles(): ColorRoles = ColorRoles(
+    bg = background,
+    surface = surface,
+    surfaceAlt = surface,
+    ink = ink,
+    inkSoft = inkSoft,
+    inkMuted = inkMuted,
+    hairline = hairline,
+    accent = accent,
+    accentSoft = accent.copy(alpha = 0.6f),
+    onAccent = if (isDark) background else Color.White,
+    good = Color(0xFF5A7A52),
+    warn = danger,
+)
+
 @Composable
 fun darkThemeFromSettings(): Boolean {
     val darkMode by rememberEnumPreference(DarkModeKey)
@@ -61,89 +160,6 @@ fun darkThemeFromSettings(): Boolean {
         DarkMode.LIGHT -> false
         DarkMode.DARK -> true
     }
-}
-
-@Composable
-private fun colorRolesFromSettings(isDark: Boolean): ColorRoles {
-    val colorPresetId by rememberPreference(ColorPresetIdKey, ColorPreset.DEFAULT.id)
-    val preset = ColorPreset.OPTIONS.firstOrNull { it.id == colorPresetId } ?: ColorPreset.DEFAULT
-    return preset.roles(isDark)
-}
-
-fun ColorRoles.toMaterialColorScheme(isDark: Boolean): ColorScheme {
-    val base = if (isDark) darkColorScheme() else lightColorScheme()
-    return base.copy(
-        primary = accent,
-        onPrimary = onAccent,
-        primaryContainer = accentSoft,
-        onPrimaryContainer = ink,
-        inversePrimary = accent,
-        secondary = accentSoft,
-        onSecondary = onAccent,
-        secondaryContainer = surfaceAlt,
-        onSecondaryContainer = ink,
-        tertiary = good,
-        onTertiary = onAccent,
-        tertiaryContainer = surfaceAlt,
-        onTertiaryContainer = ink,
-        background = bg,
-        onBackground = ink,
-        surface = surface,
-        onSurface = ink,
-        surfaceVariant = surfaceAlt,
-        onSurfaceVariant = inkMuted,
-        surfaceTint = accent,
-        inverseSurface = ink,
-        inverseOnSurface = bg,
-        error = warn,
-        onError = onAccent,
-        errorContainer = warn.copy(alpha = 0.22f),
-        onErrorContainer = ink,
-        outline = hairline,
-        outlineVariant = hairline,
-        scrim = Color.Black,
-        surfaceBright = surfaceAlt,
-        surfaceDim = bg,
-        surfaceContainer = bg,
-        surfaceContainerHigh = surface,
-        surfaceContainerHighest = surfaceAlt,
-        surfaceContainerLow = bg,
-        surfaceContainerLowest = bg,
-    )
-}
-
-@Composable
-private fun typographyFromSettings(): Typography {
-    val baseSize by rememberEnumPreference(BaseSizeKey)
-    val displayFontFamily by rememberEnumPreference(DisplayFontFamilyKey)
-    val bodyFontFamily by rememberEnumPreference(BodyFontFamilyKey)
-    val displayWidth by rememberPreference(
-        DisplayFontWidthKey,
-        FontAxisConfig.DEFAULT_DISPLAY_WIDTH,
-    )
-    val displayGrade by rememberPreference(
-        DisplayFontGradeKey,
-        FontAxisConfig.DEFAULT_DISPLAY_GRADE,
-    )
-    val displayRond by rememberPreference(
-        DisplayFontRondKey,
-        FontAxisConfig.DEFAULT_DISPLAY_ROND,
-    )
-    val bodyWidth by rememberPreference(BodyFontWidthKey, FontAxisConfig.DEFAULT_BODY_WIDTH)
-    val bodyGrade by rememberPreference(BodyFontGradeKey, FontAxisConfig.DEFAULT_BODY_GRADE)
-    val bodyRond by rememberPreference(BodyFontRondKey, FontAxisConfig.DEFAULT_BODY_ROND)
-
-    return rememberAppTypography(
-        baseSize = baseSize,
-        displayFontFamily = displayFontFamily,
-        bodyFontFamily = bodyFontFamily,
-        displayWidth = displayWidth,
-        displayGrade = displayGrade,
-        displayRond = displayRond,
-        bodyWidth = bodyWidth,
-        bodyGrade = bodyGrade,
-        bodyRond = bodyRond,
-    )
 }
 
 object Padding {

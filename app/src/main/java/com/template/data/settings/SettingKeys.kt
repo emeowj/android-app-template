@@ -8,6 +8,9 @@ import com.template.ui.theme.AppFontFamily
 import com.template.ui.theme.BaseSize
 
 val DarkModeKey = enumPreferencesKey("darkMode", DarkMode.SYSTEM)
+val TypePairingKey = enumPreferencesKey("typePairing", com.template.ui.theme.AppTypePairing.Editorial)
+val DensityKey = enumPreferencesKey("density", com.template.ui.theme.AppDensity.Comfortable)
+val DynamicColorEnabledKey = booleanPreferencesKey("dynamicColorEnabled")
 val HapticFeedbackEnabledKey = booleanPreferencesKey("hapticFeedbackEnabled")
 
 val ColorPresetIdKey = stringPreferencesKey("colorPresetId")

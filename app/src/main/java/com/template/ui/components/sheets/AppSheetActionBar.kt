@@ -30,20 +30,18 @@ fun AppSheetActionBar(
 ) {
     AppSheetActionBarContainer(modifier = modifier) {
         AppButton(
-            label = secondaryLabel,
+            text = secondaryLabel,
             onClick = onSecondary,
             variant = AppButtonVariant.Secondary,
             shape = AppShape.input,
-            height = AppButtonDefaults.Height,
             modifier = Modifier.weight(0.9f),
         )
         AppButton(
-            label = primaryLabel,
+            text = primaryLabel,
             onClick = onPrimary,
             enabled = primaryEnabled,
             variant = AppButtonVariant.Primary,
             shape = AppShape.input,
-            height = AppButtonDefaults.Height,
             modifier = Modifier.weight(1.8f),
         )
     }
@@ -58,12 +56,11 @@ fun AppSheetActionBar(
 ) {
     AppSheetActionBarContainer(modifier = modifier) {
         AppButton(
-            label = primaryLabel,
+            text = primaryLabel,
             onClick = onPrimary,
             enabled = primaryEnabled,
             variant = AppButtonVariant.Primary,
             shape = AppShape.input,
-            height = AppButtonDefaults.Height,
             modifier = Modifier.weight(1f),
         )
     }

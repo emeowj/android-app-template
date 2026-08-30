@@ -17,8 +17,11 @@ import com.slack.circuit.foundation.CircuitCompositionLocals
 import com.slack.circuit.foundation.rememberCircuitNavigator
 import com.slack.circuit.overlay.ContentWithOverlays
 import com.template.screens.home.HomeScreen
+import com.template.ui.theme.AppColors
+import com.template.ui.theme.AppDensity
+import com.template.ui.theme.AppTheme
+import com.template.ui.theme.AppTypePairing
 import com.template.ui.theme.ColorRoles
-import com.template.ui.theme.LocalColorRoles
 import com.template.ui.theme.TemplateTheme
 
 @Composable
@@ -27,6 +30,9 @@ fun AppPreview(
     darkTheme: Boolean? = null,
     colorScheme: ColorScheme? = null,
     colorRoles: ColorRoles? = null,
+    colors: AppColors? = null,
+    pairing: AppTypePairing? = null,
+    density: AppDensity? = null,
     content: @Composable () -> Unit,
 ) {
     TemplateTheme(
@@ -34,11 +40,14 @@ fun AppPreview(
         darkTheme = darkTheme,
         colorScheme = colorScheme,
         colorRoles = colorRoles,
+        colors = colors,
+        pairing = pairing,
+        density = density,
     ) {
         val backStack = rememberSaveableBackStack(root = HomeScreen)
         val navigator = rememberCircuitNavigator(backStack = backStack)
 
-        Surface(color = LocalColorRoles.current.surface) {
+        Surface(color = AppTheme.colors.background) {
             CircuitCompositionLocals(circuit = PreviewCircuit) { ContentWithOverlays { content() } }
         }
     }

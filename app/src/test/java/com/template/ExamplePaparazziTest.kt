@@ -4,6 +4,7 @@ import app.cash.paparazzi.DeviceConfig.Companion.PIXEL_5
 import app.cash.paparazzi.Paparazzi
 import com.template.screens.home.HomeScreen
 import com.template.screens.home.HomeUi
+import com.template.ui.theme.TemplateTheme
 import org.junit.Rule
 import org.junit.Test
 
@@ -14,6 +15,10 @@ class ExamplePaparazziTest {
 
     @Test
     fun snapshotHomeScreen() {
-        paparazzi.snapshot { HomeUi(state = HomeScreen.State {}) }
+        paparazzi.snapshot {
+            TemplateTheme {
+                HomeUi(state = HomeScreen.State {})
+            }
+        }
     }
 }

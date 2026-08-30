@@ -1,8 +1,5 @@
 package com.template.screens.search
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,43 +17,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LoadingIndicator
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.dropShadow
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -64,26 +41,35 @@ import com.slack.circuit.codegen.annotations.CircuitInject
 import com.template.R
 import com.template.data.itunes.ITunesResult
 import com.template.ui.LocalBottomBarPadding
+import com.template.ui.components.feedback.AppEmptyState
+import com.template.ui.components.inputs.AppSearchField
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.Previews
-import com.template.ui.theme.AppShape
+import com.template.ui.theme.AppShapes
+import com.template.ui.theme.AppTheme
+import com.template.ui.theme.LocalAppDensity
 import com.template.ui.theme.Padding
 import dev.zacsweers.metro.AppScope
 
 @CircuitInject(SearchScreen::class, AppScope::class)
 @Composable
 fun SearchUi(state: SearchScreen.State, modifier: Modifier = Modifier) {
+    val colors = AppTheme.colors
+    val densityTokens = LocalAppDensity.current
+
     Scaffold(
         modifier = modifier,
         topBar = { SearchTopbar(state = state) },
-        containerColor = MaterialTheme.colorScheme.surfaceContainer,
+        containerColor = colors.background,
     ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+        ) {
             when (state) {
-                is SearchScreen.State.Empty -> EmptyResultUi(paddingValues = paddingValues)
-
-                is SearchScreen.State.Loaded ->
-                    SearchResultUi(state = state, paddingValues = paddingValues)
+                is SearchScreen.State.Empty -> EmptyResultUi()
+                is SearchScreen.State.Loaded -> SearchResultUi(state = state)
             }
         }
     }
@@ -91,131 +77,48 @@ fun SearchUi(state: SearchScreen.State, modifier: Modifier = Modifier) {
 
 @Composable
 private fun SearchTopbar(state: SearchScreen.State) {
-    val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
-    val background = MaterialTheme.colorScheme.surfaceContainer
-    CenterAlignedTopAppBar(
-        title = {
-            val textFieldValue =
-                remember(state.query) {
-                    mutableStateOf(
-                        TextFieldValue(
-                            text = state.query,
-                            selection = TextRange(state.query.length),
-                        ),
-                    )
+    val colors = AppTheme.colors
+    val densityTokens = LocalAppDensity.current
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(colors.background)
+            .statusBarsPadding()
+            .padding(horizontal = densityTokens.screenPadding)
+            .padding(top = Padding.sm, bottom = Padding.sm),
+    ) {
+        AppSearchField(
+            value = state.query,
+            onValueChange = { newValue ->
+                if (newValue != state.query) {
+                    state.eventSink(SearchScreen.Event.UpdateQuery(newValue))
                 }
-            SearchTextField(
-                value = textFieldValue.value,
-                onValueChange = { newValue ->
-                    textFieldValue.value = newValue
-                    if (newValue.text != state.query) {
-                        state.eventSink(SearchScreen.Event.UpdateQuery(newValue.text))
-                    }
-                },
+            },
+            placeholder = stringResource(R.string.search_hint),
+            onClear = { state.eventSink(SearchScreen.Event.ClearQuery) },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions = KeyboardActions(
                 onSearch = {
                     keyboardController?.hide()
                     state.eventSink(SearchScreen.Event.Search)
                 },
-                onClear = {
-                    textFieldValue.value = TextFieldValue()
-                    state.eventSink(SearchScreen.Event.ClearQuery)
-                },
-                focusRequester = focusRequester,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-        contentPadding = PaddingValues(horizontal = Padding.small),
-        modifier =
-            Modifier
-                .drawBehind {
-                    drawRect(
-                        brush = Brush.verticalGradient(0f to background, 1f to Color.Transparent),
-                    )
-                }
-                .statusBarsPadding(),
-    )
-}
-
-@Composable
-private fun SearchTextField(
-    value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
-    onSearch: () -> Unit,
-    onClear: () -> Unit,
-    focusRequester: FocusRequester,
-    modifier: Modifier = Modifier,
-) {
-    TextField(
-        value = value,
-        onValueChange = onValueChange,
-        modifier =
-            modifier
-                .padding(horizontal = Padding.small)
-                .padding(top = Padding.extraSmall)
-                .focusRequester(focusRequester)
-                .dropShadow(
-                    shape = RoundedCornerShape(50),
-                    shadow =
-                        Shadow(
-                            radius = 4.dp,
-                            spread = 2.dp,
-                            color = MaterialTheme.colorScheme.surfaceContainer,
-                        ),
-                ),
-        placeholder = {
-            Text(
-                text = stringResource(R.string.search_hint),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        },
-        leadingIcon = {
-            Icon(
-                painter = painterResource(R.drawable.ic_search),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-            )
-        },
-        trailingIcon = {
-            AnimatedVisibility(
-                visible = value.text.isNotEmpty(),
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                IconButton(onClick = onClear) {
-                    Icon(painter = painterResource(R.drawable.ic_close), contentDescription = null)
-                }
-            }
-        },
-        textStyle = MaterialTheme.typography.bodyLarge,
-        shape = CircleShape,
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-        keyboardActions = KeyboardActions(onSearch = { onSearch() }),
-        singleLine = true,
-        colors =
-            TextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.surface,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
             ),
-    )
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
 }
 
 @Composable
-private fun EmptyResultUi(paddingValues: PaddingValues, modifier: Modifier = Modifier) {
+private fun EmptyResultUi(modifier: Modifier = Modifier) {
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(paddingValues),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = stringResource(R.string.search_empty_hint),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        AppEmptyState(
+            title = stringResource(R.string.search_title),
+            description = stringResource(R.string.search_empty_hint),
         )
     }
 }
@@ -223,15 +126,16 @@ private fun EmptyResultUi(paddingValues: PaddingValues, modifier: Modifier = Mod
 @Composable
 private fun SearchResultUi(
     state: SearchScreen.State.Loaded,
-    paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
+    val colors = AppTheme.colors
+    val densityTokens = LocalAppDensity.current
+
     if (state.results.isEmpty() && !state.isSearching) {
         Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                text = stringResource(R.string.no_results),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            AppEmptyState(
+                title = stringResource(R.string.no_results),
+                description = stringResource(R.string.search_empty_hint),
             )
         }
     } else {
@@ -240,14 +144,17 @@ private fun SearchResultUi(
             state = listState,
             modifier = modifier
                 .fillMaxSize()
-                .padding(horizontal = Padding.small),
-            contentPadding = paddingValues,
+                .padding(horizontal = densityTokens.screenPadding),
+            contentPadding = PaddingValues(top = Padding.sm, bottom = LocalBottomBarPadding.current + 80.dp),
             verticalArrangement = Arrangement.spacedBy(Padding.hairline),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (state.isSearching) {
                 item(key = "loading") {
-                    LoadingIndicator(modifier = Modifier.padding(Padding.medium))
+                    CircularProgressIndicator(
+                        color = colors.accent,
+                        modifier = Modifier.padding(Padding.md),
+                    )
                 }
             }
 
@@ -257,19 +164,10 @@ private fun SearchResultUi(
             ) { index, result ->
                 ResultItem(
                     result = result,
-                    shape = AppShape.calculateListShape(index, state.results.size),
+                    shape = AppShapes.listItemShape(index, state.results.size),
                     onClick = { state.eventSink(SearchScreen.Event.ClickResult(result)) },
-                    modifier =
-                        Modifier
-                            .animateItem()
-                            .padding(top = if (index == 0) Padding.small else 0.dp),
+                    modifier = Modifier.animateItem(),
                 )
-            }
-
-            if (state.results.isNotEmpty()) {
-                item(key = "bottom-spacer") {
-                    Spacer(modifier = Modifier.height(LocalBottomBarPadding.current))
-                }
             }
         }
     }
@@ -282,43 +180,45 @@ private fun ResultItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
+    val colors = AppTheme.colors
+    val typography = AppTheme.typography
+
     Surface(
         onClick = onClick,
         shape = shape,
-        color = MaterialTheme.colorScheme.surface,
+        color = colors.surface,
+        contentColor = colors.ink,
         modifier = modifier.fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier
-                .padding(Padding.medium)
+                .padding(Padding.md)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
                 model = result.artworkUrl100,
                 contentDescription = null,
-                modifier =
-                    Modifier
-                        .size(64.dp)
-                        .clip(RoundedCornerShape(AppShape.listFullRadius - Padding.medium))
-                        .background(
-                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f),
-                        ),
+                modifier = Modifier
+                    .size(56.dp)
+                    .clip(RoundedCornerShape(AppShapes.InputRadius))
+                    .background(color = colors.ink04),
                 contentScale = ContentScale.Crop,
             )
-            Spacer(modifier = Modifier.width(Padding.small))
+            Spacer(modifier = Modifier.width(Padding.md))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = result.trackName ?: result.collectionName ?: "Unknown",
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
+                    style = typography.bodyLg,
+                    fontWeight = FontWeight.SemiBold,
+                    color = colors.ink,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     text = result.artistName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = typography.bodyMd,
+                    color = colors.inkMuted,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -332,31 +232,29 @@ private fun ResultItem(
 private fun SearchUiPreview() {
     AppPreview {
         SearchUi(
-            state =
-                SearchScreen.State.Loaded(
-                    query = "Jack Johnson",
-                    results =
-                        listOf(
-                            ITunesResult(
-                                trackId = 1,
-                                artistName = "Jack Johnson",
-                                trackName = "Better Together",
-                                collectionName = "In Between Dreams",
-                                artworkUrl100 = null,
-                                wrapperType = "track",
-                            ),
-                            ITunesResult(
-                                trackId = 2,
-                                artistName = "Jack Johnson",
-                                trackName = "Banana Pancakes",
-                                collectionName = "In Between Dreams",
-                                artworkUrl100 = null,
-                                wrapperType = "track",
-                            ),
-                        ),
-                    isSearching = false,
-                    eventSink = {},
+            state = SearchScreen.State.Loaded(
+                query = "Jack Johnson",
+                results = listOf(
+                    ITunesResult(
+                        trackId = 1,
+                        artistName = "Jack Johnson",
+                        trackName = "Better Together",
+                        collectionName = "In Between Dreams",
+                        artworkUrl100 = null,
+                        wrapperType = "track",
+                    ),
+                    ITunesResult(
+                        trackId = 2,
+                        artistName = "Jack Johnson",
+                        trackName = "Banana Pancakes",
+                        collectionName = "In Between Dreams",
+                        artworkUrl100 = null,
+                        wrapperType = "track",
+                    ),
                 ),
+                isSearching = false,
+                eventSink = {},
+            ),
         )
     }
 }

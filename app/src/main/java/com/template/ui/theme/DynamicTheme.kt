@@ -32,7 +32,7 @@ fun DynamicTheme(
 ) {
     val seed = rememberSeedColorFromImage(model = model, fallback = fallback)
     val scheme = rememberDynamicColorScheme(seedColor = seed, isDark = isDark, style = style)
-    TemplateTheme(colorScheme = scheme, darkTheme = isDark, content = content)
+    MuralTheme(colorScheme = scheme, darkTheme = isDark, content = content)
 }
 
 @Composable

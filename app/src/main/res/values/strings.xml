@@ -6,6 +6,7 @@
     <string name="nav_home">Home</string>
     <string name="nav_search">Search</string>
     <string name="nav_settings">Settings</string>
+    <string name="nav_back">Back</string>
 
     <!-- Home Screen -->
     <string name="home_title">Home</string>
@@ -13,9 +14,21 @@
 
     <!-- Settings Screen -->
     <string name="settings_title">Settings</string>
+    <string name="settings_section_appearance">Appearance &amp; theming</string>
+    <string name="settings_section_behavior">Behavior</string>
+    <string name="settings_section_about">About &amp; legal</string>
     <string name="settings_appearance_section">Appearance</string>
     <string name="settings_behavior_section">Behavior</string>
     <string name="settings_look_section">LOOK</string>
+
+    <!-- Settings: Appearance -->
+    <string name="settings_theme_title">Theme</string>
+    <string name="settings_theme_system">System</string>
+    <string name="settings_theme_system_desc">Match your device setting</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_light_desc">Always use the light palette</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_dark_desc">Always use the dark palette</string>
 
     <string name="settings_dark_mode_title">Mode</string>
     <string name="settings_dark_mode_system">System Default</string>
@@ -49,6 +62,17 @@
     <string name="settings_typography_pairing_builder_title">Custom Pairing</string>
     <string name="settings_typography_add_pairing_cd">Create custom pairing</string>
 
+    <string name="settings_typography_editorial_desc">Roboto Serif · Hanken Grotesk</string>
+    <string name="settings_typography_literary_desc">Cormorant Garamond · Hanken Grotesk</string>
+    <string name="settings_typography_modern_desc">Space Grotesk · IBM Plex Sans</string>
+
+    <string name="settings_density_compact_desc">Tighter spacing, more per screen</string>
+    <string name="settings_density_comfortable_desc">The default</string>
+    <string name="settings_density_spacious_desc">More breathing room</string>
+
+    <string name="settings_dynamic_color_title">Dynamic colour</string>
+    <string name="settings_dynamic_color_note">Themes the app dynamically</string>
+
     <string name="settings_base_size_title">Base Size</string>
     <string name="settings_base_size_sample">Aa</string>
     <string name="settings_base_size_sp_value">%1$dsp</string>
@@ -80,6 +104,34 @@
     <string name="settings_haptic_feedback_title">Haptic Feedback</string>
     <string name="settings_on">On</string>
     <string name="settings_off">Off</string>
+
+    <!-- Design System Type Pairings -->
+    <string name="type_pairing_editorial">Editorial</string>
+    <string name="type_pairing_literary">Literary</string>
+    <string name="type_pairing_modern">Modern</string>
+
+    <!-- Design System Densities -->
+    <string name="density_compact">Compact</string>
+    <string name="density_comfortable">Comfortable</string>
+    <string name="density_spacious">Spacious</string>
+
+    <!-- Settings: About & Legal -->
+    <string name="settings_app_version_title">Template</string>
+    <string name="settings_app_version_note">Version %1$s (%2$s)</string>
+    <string name="settings_licenses_title">Open source licenses</string>
+    <string name="settings_privacy_title">Privacy policy</string>
+    <string name="settings_section_developer">Developer</string>
+    <string name="showcase_title">Design System Catalog</string>
+    <string name="showcase_subtitle">Interactive showcase of all reusable UI components</string>
+    <string name="settings_showcase_title">Design System Catalog</string>
+    <string name="settings_showcase_desc">Interactive showcase of all design system components</string>
+
+    <!-- Settings: Snackbars -->
+    <string name="settings_snack_theme_set">Theme set to %1$s</string>
+    <string name="settings_snack_type_set">Typography set to %1$s</string>
+    <string name="settings_snack_density_set">Density set to %1$s</string>
+    <string name="settings_snack_dynamic_color_on">Dynamic colour on</string>
+    <string name="settings_snack_dynamic_color_off">Dynamic colour off</string>
 
     <!-- Search Screen -->
     <string name="search_title">Search</string>

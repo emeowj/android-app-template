@@ -1,145 +1,143 @@
 package com.template.ui.components
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.template.R
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
-import com.template.ui.theme.AppShape
-import com.template.ui.theme.LocalColorRoles
-import com.template.ui.theme.Padding
-import com.template.ui.theme.softTint
+import com.template.ui.theme.AppShapes
+import com.template.ui.theme.AppTheme
+import com.template.ui.theme.appFocusRing
 
-enum class AppChipStyle {
-    /** Circular filter chip with a selected/unselected state. */
-    Filter,
+@Immutable
+data class AppChipColors(
+    val container: Color,
+    val content: Color,
+    val border: Color,
+    val selectedContainer: Color,
+    val selectedContent: Color,
+    val selectedBorder: Color,
+    val disabledContainer: Color,
+    val disabledContent: Color,
+    val disabledBorder: Color,
+)
 
-    /** Compact soft-tint pill for metadata or status labels (read-only by default). */
-    Pill,
+object AppChipDefaults {
+    val MinHeight: Dp = 32.dp
+    val Shape: Shape = RoundedCornerShape(AppShapes.ChipRadius)
+    val BorderWidth: Dp = 0.5.dp
+    val HorizontalPadding: Dp = 12.dp
+    val IconSize: Dp = 13.dp
+    val ItemSpacing: Dp = 6.dp
 
-    /** Filter-shaped chip with a leading colored dot, used for status indicators. */
-    Status,
+    @Composable
+    fun colors(): AppChipColors {
+        val colors = AppTheme.colors
+        return AppChipColors(
+            container = colors.surface,
+            content = colors.inkMuted,
+            border = colors.border,
+            selectedContainer = colors.accent12,
+            selectedContent = colors.accent,
+            selectedBorder = colors.accent,
+            disabledContainer = colors.surface,
+            disabledContent = colors.inkMuted.copy(alpha = 0.44f),
+            disabledBorder = colors.hairline,
+        )
+    }
 }
 
 @Composable
 fun AppChip(
     label: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
-    style: AppChipStyle = AppChipStyle.Filter,
     selected: Boolean = false,
-    leadingIcon: (@Composable RowScope.() -> Unit)? = null,
-    trailingIcon: (@Composable RowScope.() -> Unit)? = null,
-    trailingText: String? = null,
-    labelFontFamily: FontFamily? = null,
-    tint: Color? = null,
+    enabled: Boolean = true,
+    count: Int? = null,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    trailingIcon: (@Composable () -> Unit)? = null,
+    shape: Shape = AppChipDefaults.Shape,
+    colors: AppChipColors = AppChipDefaults.colors(),
+    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    val roles = LocalColorRoles.current
-    val shape: Shape = when (style) {
-        AppChipStyle.Filter, AppChipStyle.Status -> CircleShape
-        AppChipStyle.Pill -> AppShape.pill
+    val containerColor = when {
+        !enabled -> colors.disabledContainer
+        selected -> colors.selectedContainer
+        else -> colors.container
     }
-    val container: Color
-    val content: Color
-    val border: BorderStroke?
-    when (style) {
-        AppChipStyle.Filter, AppChipStyle.Status -> {
-            container = when {
-                selected -> tint ?: roles.ink
-                else -> Color.Transparent
-            }
-            content = when {
-                selected -> roles.bg
-                else -> roles.inkSoft
-            }
-            border = if (selected) null else BorderStroke(Padding.hairline, roles.hairline)
-        }
 
-        AppChipStyle.Pill -> {
-            val accent = tint ?: roles.accent
-            container = accent.softTint()
-            content = accent
-            border = null
-        }
+    val contentColor = when {
+        !enabled -> colors.disabledContent
+        selected -> colors.selectedContent
+        else -> colors.content
     }
-    val horizontalPadding = if (style == AppChipStyle.Pill) Padding.sm else Padding.lg
-    val verticalPadding = if (style == AppChipStyle.Pill) Padding.xs else Padding.sm
-    val labelStyle =
-        if (style == AppChipStyle.Pill) {
-            MaterialTheme.typography.labelSmall
-        } else {
-            MaterialTheme.typography.bodyMedium
-        }
-    val labelWeight = if (style == AppChipStyle.Pill) FontWeight.Medium else FontWeight.SemiBold
-    val rowContent: @Composable () -> Unit = {
+
+    val borderColor = when {
+        !enabled -> colors.disabledBorder
+        selected -> colors.selectedBorder
+        else -> colors.border
+    }
+
+    Surface(
+        onClick = onClick,
+        enabled = enabled,
+        shape = shape,
+        color = containerColor,
+        contentColor = contentColor,
+        border = BorderStroke(AppChipDefaults.BorderWidth, borderColor),
+        interactionSource = interactionSource,
+        modifier = modifier
+            .defaultMinSize(minHeight = AppChipDefaults.MinHeight)
+            .appFocusRing(visible = false, shape = shape, ringColor = AppTheme.colors.accent),
+    ) {
         Row(
-            modifier =
-                Modifier.padding(
-                    horizontal = horizontalPadding,
-                    vertical = verticalPadding,
-                ),
-            horizontalArrangement = Arrangement.spacedBy(Padding.sm),
+            modifier = Modifier.padding(horizontal = AppChipDefaults.HorizontalPadding, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(AppChipDefaults.ItemSpacing, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            leadingIcon?.invoke(this)
+            leadingIcon?.invoke()
             Text(
                 text = label,
-                style = labelStyle,
-                fontFamily = labelFontFamily,
-                fontWeight = labelWeight,
-                letterSpacing = 0.sp,
-                color = content,
+                style = AppTheme.typography.bodySm,
+                fontWeight = FontWeight.Medium,
+                color = contentColor,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            trailingIcon?.invoke(this)
-            trailingText?.let {
+            count?.let {
                 Text(
-                    text = it,
-                    style = labelStyle,
-                    fontWeight = FontWeight.Medium,
-                    letterSpacing = 0.sp,
-                    color = if (selected) content.copy(alpha = 0.78f) else roles.inkMuted,
+                    text = it.toString(),
+                    style = AppTheme.typography.numeric,
+                    fontWeight = FontWeight.SemiBold,
+                    color = contentColor.copy(alpha = 0.70f),
                     maxLines = 1,
                 )
             }
+            trailingIcon?.invoke()
         }
-    }
-    if (onClick != null) {
-        Surface(
-            onClick = onClick,
-            shape = shape,
-            color = container,
-            contentColor = content,
-            border = border,
-            modifier = modifier,
-            content = rowContent,
-        )
-    } else {
-        Surface(
-            shape = shape,
-            color = container,
-            contentColor = content,
-            border = border,
-            modifier = modifier,
-            content = rowContent,
-        )
     }
 }
 
@@ -148,33 +146,60 @@ fun AppChip(
 private fun AppChipPreview() {
     AppPreview {
         Column(
-            modifier = Modifier.padding(Padding.md),
-            verticalArrangement = Arrangement.spacedBy(Padding.sm),
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Row(horizontalArrangement = Arrangement.spacedBy(Padding.sm)) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 AppChip(
-                    label = "All",
+                    label = "All Wallpapers",
                     onClick = {},
                     selected = true,
-                    trailingText = "42",
+                    count = 42,
                 )
                 AppChip(
-                    label = "Active",
+                    label = "Favorites",
                     onClick = {},
                     selected = false,
-                    trailingText = "3",
+                    count = 12,
                 )
                 AppChip(
-                    label = "Audio",
+                    label = "Generated",
                     onClick = {},
                     selected = false,
-                    trailingText = "1",
                 )
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(Padding.sm)) {
-                AppChip(label = "Paper", style = AppChipStyle.Pill)
-                AppChip(label = "304 pages", style = AppChipStyle.Pill)
-                AppChip(label = "Highlight", style = AppChipStyle.Pill)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                AppChip(
+                    label = "With Icon",
+                    onClick = {},
+                    selected = false,
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_star),
+                            contentDescription = null,
+                            modifier = Modifier.size(AppChipDefaults.IconSize),
+                        )
+                    },
+                )
+                AppChip(
+                    label = "Selected With Icon",
+                    onClick = {},
+                    selected = true,
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_star),
+                            contentDescription = null,
+                            modifier = Modifier.size(AppChipDefaults.IconSize),
+                        )
+                    },
+                    count = 5,
+                )
+                AppChip(
+                    label = "Disabled",
+                    onClick = {},
+                    enabled = false,
+                    count = 0,
+                )
             }
         }
     }

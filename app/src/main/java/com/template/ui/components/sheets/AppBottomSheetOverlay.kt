@@ -1,7 +1,5 @@
 package com.template.ui.components.sheets
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
@@ -9,10 +7,10 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
@@ -22,7 +20,6 @@ import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.slack.circuit.overlay.ContentWithOverlays
@@ -30,32 +27,34 @@ import com.slack.circuit.overlay.OverlayNavigator
 import com.slack.circuitx.overlays.BottomSheetOverlay
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
-import com.template.ui.theme.AppShape
-import com.template.ui.theme.LocalColorRoles
+import com.template.ui.theme.AppTheme
 import com.template.ui.theme.Padding
-import com.template.ui.theme.TemplateTheme
+import com.template.ui.theme.sheetShadow
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppModalBottomSheet(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    sheetState: SheetState =
-        rememberBottomSheetState(
-            initialValue = SheetValue.Hidden,
-            enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded),
-        ),
+    sheetState: SheetState = rememberBottomSheetState(
+        initialValue = SheetValue.Hidden,
+        enabledValues = setOf(SheetValue.Hidden, SheetValue.Expanded),
+    ),
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val colors = AppTheme.colors
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         sheetState = sheetState,
-        shape = AppShape.sheet,
+        shape = AppBottomSheetDefaults.Shape,
         dragHandle = {
-            DragHandle()
+            AppSheetGrabber()
         },
-        containerColor = LocalColorRoles.current.bg,
-        tonalElevation = 4.dp,
+        containerColor = colors.surface,
+        contentColor = colors.ink,
+        scrimColor = colors.ink56,
+        tonalElevation = 0.dp,
         contentWindowInsets = { WindowInsets.statusBars },
     ) {
         AppSheetSurface(content = content)
@@ -72,7 +71,7 @@ fun <Model : Any, Result : Any> appBottomSheetOverlay(
     onDismiss = onDismiss,
     sheetContainerColor = Color.Transparent,
     tonalElevation = 0.dp,
-    sheetShape = AppShape.sheet,
+    sheetShape = AppBottomSheetDefaults.Shape,
     dragHandle = {},
     skipPartiallyExpandedState = true,
     contentWindowInsets = { WindowInsets() },
@@ -80,7 +79,7 @@ fun <Model : Any, Result : Any> appBottomSheetOverlay(
     ContentWithOverlays {
         AppSheetSurface(modifier = Modifier.statusBarsPadding()) {
             if (showDragHandle) {
-                DragHandle(modifier = Modifier.align(Alignment.CenterHorizontally))
+                AppSheetGrabber(modifier = Modifier.align(Alignment.CenterHorizontally))
             }
             content(sheetModel, navigator)
             Spacer(modifier = Modifier.navigationBarsPadding())
@@ -89,37 +88,25 @@ fun <Model : Any, Result : Any> appBottomSheetOverlay(
 }
 
 @Composable
-private fun DragHandle(modifier: Modifier = Modifier) {
-    val colors = LocalColorRoles.current
-    Box(
-        modifier = modifier
-            .padding(top = Padding.md, bottom = Padding.sm)
-            .size(width = 80.dp, height = 5.dp)
-            .clip(AppShape.pill)
-            .background(colors.hairline),
-    )
-}
-
-@Composable
 fun AppSheetSurface(
     modifier: Modifier = Modifier,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    TemplateTheme {
-        val colors = LocalColorRoles.current
-        Surface(
-            color = colors.surface,
-            shape = AppShape.sheet,
-            modifier = modifier
-                .fillMaxWidth(),
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .systemBarsPadding(),
-                content = content,
-            )
-        }
+    val colors = AppTheme.colors
+    Surface(
+        color = colors.surface,
+        contentColor = colors.ink,
+        shape = AppBottomSheetDefaults.Shape,
+        modifier = modifier
+            .fillMaxWidth()
+            .sheetShadow(shape = AppBottomSheetDefaults.Shape),
+        tonalElevation = 0.dp,
+        shadowElevation = 0.dp,
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            content = content,
+        )
     }
 }
 
@@ -128,17 +115,16 @@ fun AppSheetSurface(
 private fun AppSheetSurfacePreview() {
     AppPreview {
         AppSheetSurface(modifier = Modifier.padding(vertical = Padding.sm)) {
-            DragHandle(modifier = Modifier.align(Alignment.CenterHorizontally))
+            AppSheetGrabber(modifier = Modifier.align(Alignment.CenterHorizontally))
             AppSheetHeader(
                 kicker = "Preview",
                 title = "Shared sheet surface",
             )
             Text(
                 text = "Sheet content uses the same rounded surface and app theme.",
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(Padding.lg),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Padding.lg),
             )
             AppSheetActionBar(
                 secondaryLabel = "Cancel",

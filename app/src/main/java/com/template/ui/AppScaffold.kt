@@ -6,6 +6,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ShortNavigationBar
@@ -34,6 +37,8 @@ import com.template.data.settings.HapticFeedbackEnabledKey
 import com.template.data.settings.rememberPreference
 import com.template.screens.home.HomeScreen
 import com.template.screens.search.SearchScreen
+import com.template.ui.components.navigation.AppBottomNav
+import com.template.ui.components.navigation.AppBottomNavItem
 import com.template.ui.haptic.HapticFeedbackType
 import com.template.ui.haptic.HapticNavigationEventListener
 import com.template.ui.haptic.LocalHapticFeedbackManager
@@ -123,10 +128,15 @@ private fun BottomNavBar(
     modifier: Modifier = Modifier,
 ) {
     val hapticManager = LocalHapticFeedbackManager.current
-    ShortNavigationBar(modifier = modifier) {
+    AppBottomNav(
+        modifier = modifier
+            .fillMaxWidth()
+            .navigationBarsPadding()
+            .padding(bottom = 16.dp),
+    ) {
         NavigationTab.entries.forEach { tab ->
             val selected = tab == selectedTab
-            ShortNavigationBarItem(
+            AppBottomNavItem(
                 selected = selected,
                 onClick = {
                     hapticManager.performHaptic(HapticFeedbackType.TabClick)
@@ -134,13 +144,8 @@ private fun BottomNavBar(
                         navigator.resetRoot(tab.screen)
                     }
                 },
-                icon = {
-                    Icon(
-                        painter = painterResource(if (selected) tab.iconFilled else tab.icon),
-                        contentDescription = stringResource(tab.labelRes),
-                    )
-                },
-                label = null,
+                iconRes = if (selected) tab.iconFilled else tab.icon,
+                contentDescription = stringResource(tab.labelRes),
             )
         }
     }

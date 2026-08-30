@@ -3,7 +3,8 @@ package com.template.ui.previews
 import app.cash.paparazzi.DeviceConfig.Companion.PIXEL_9
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
-import com.template.ui.theme.ColorPreset
+import com.template.ui.theme.AppDensity
+import com.template.ui.theme.AppTypePairing
 import org.junit.Rule
 import org.junit.Test
 
@@ -11,63 +12,74 @@ class DesignSystemUiTest {
     @get:Rule
     val paparazzi: Paparazzi =
         Paparazzi(
-            deviceConfig = PIXEL_9.copy(screenWidth = 2400, screenHeight = 3600),
+            deviceConfig = PIXEL_9.copy(screenWidth = 1200, screenHeight = 7600),
             theme = "android:Theme.Material.Light.NoActionBar",
-            renderingMode = SessionParams.RenderingMode.NORMAL,
+            renderingMode = SessionParams.RenderingMode.SHRINK,
         )
 
     @Test
-    fun snapshotDesignSystemMidnightLight() {
-        snapshotPreset(presetId = "midnight", isDark = false)
-    }
-
-    @Test
-    fun snapshotDesignSystemMidnightDark() {
-        snapshotPreset(presetId = "midnight", isDark = true)
-    }
-
-    @Test
-    fun snapshotDesignSystemSageLight() {
-        snapshotPreset(presetId = "sage", isDark = false)
-    }
-
-    @Test
-    fun snapshotDesignSystemSageDark() {
-        snapshotPreset(presetId = "sage", isDark = true)
-    }
-
-    @Test
-    fun snapshotDesignSystemInkLight() {
-        snapshotPreset(presetId = "ink", isDark = false)
-    }
-
-    @Test
-    fun snapshotDesignSystemInkDark() {
-        snapshotPreset(presetId = "ink", isDark = true)
-    }
-
-    @Test
-    fun snapshotDesignSystemClayLight() {
-        snapshotPreset(presetId = "clay", isDark = false)
-    }
-
-    @Test
-    fun snapshotDesignSystemClayDark() {
-        snapshotPreset(presetId = "clay", isDark = true)
-    }
-
-    private fun snapshotPreset(presetId: String, isDark: Boolean) {
-        val preset = ColorPreset.OPTIONS.first { it.id == presetId }
+    fun snapshotDesignSystemShowcaseLightEditorial() {
         paparazzi.snapshot {
-            AppPreview(
-                darkTheme = isDark,
-                colorRoles = preset.roles(isDark = isDark),
-            ) {
-                DesignSystemShowcase(
-                    presetName = presetId,
-                    modeLabel = if (isDark) "dark" else "light",
-                )
-            }
+            DesignSystemShowcase(
+                initialDarkTheme = false,
+                initialPairing = AppTypePairing.Editorial,
+                initialDensity = AppDensity.Comfortable,
+            )
+        }
+    }
+
+    @Test
+    fun snapshotDesignSystemShowcaseDarkEditorial() {
+        paparazzi.snapshot {
+            DesignSystemShowcase(
+                initialDarkTheme = true,
+                initialPairing = AppTypePairing.Editorial,
+                initialDensity = AppDensity.Comfortable,
+            )
+        }
+    }
+
+    @Test
+    fun snapshotDesignSystemShowcaseLiterary() {
+        paparazzi.snapshot {
+            DesignSystemShowcase(
+                initialDarkTheme = false,
+                initialPairing = AppTypePairing.Literary,
+                initialDensity = AppDensity.Comfortable,
+            )
+        }
+    }
+
+    @Test
+    fun snapshotDesignSystemShowcaseModern() {
+        paparazzi.snapshot {
+            DesignSystemShowcase(
+                initialDarkTheme = false,
+                initialPairing = AppTypePairing.Modern,
+                initialDensity = AppDensity.Comfortable,
+            )
+        }
+    }
+
+    @Test
+    fun snapshotDesignSystemShowcaseCompact() {
+        paparazzi.snapshot {
+            DesignSystemShowcase(
+                initialDarkTheme = false,
+                initialPairing = AppTypePairing.Editorial,
+                initialDensity = AppDensity.Compact,
+            )
+        }
+    }
+
+    @Test
+    fun snapshotDesignSystemShowcaseSpacious() {
+        paparazzi.snapshot {
+            DesignSystemShowcase(
+                initialDarkTheme = false,
+                initialPairing = AppTypePairing.Editorial,
+                initialDensity = AppDensity.Spacious,
+            )
         }
     }
 }
