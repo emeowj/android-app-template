@@ -4,12 +4,14 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.template.ui.theme.AppDensity
 import com.template.ui.theme.AppFontFamily
+import com.template.ui.theme.AppTypePairing
 import com.template.ui.theme.BaseSize
 
 val DarkModeKey = enumPreferencesKey("darkMode", DarkMode.SYSTEM)
-val TypePairingKey = enumPreferencesKey("typePairing", com.template.ui.theme.AppTypePairing.Editorial)
-val DensityKey = enumPreferencesKey("density", com.template.ui.theme.AppDensity.Comfortable)
+val TypePairingKey = enumPreferencesKey("typePairing", AppTypePairing.Editorial)
+val DensityKey = enumPreferencesKey("density", AppDensity.Comfortable)
 val DynamicColorEnabledKey = booleanPreferencesKey("dynamicColorEnabled")
 val HapticFeedbackEnabledKey = booleanPreferencesKey("hapticFeedbackEnabled")
 
