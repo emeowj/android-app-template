@@ -1,5 +1,6 @@
 package com.template.screens.showcase
 
+import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.slack.circuit.codegen.annotations.CircuitInject
@@ -16,7 +17,7 @@ import dev.zacsweers.metro.AssistedInject
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data object ShowcaseScreen : Screen {
+data object ShowcaseScreen : Screen, Parcelable {
     data class State(
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState

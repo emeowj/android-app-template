@@ -1,5 +1,6 @@
 package com.template.screens.search
 
+import android.os.Parcelable
 import com.slack.circuit.runtime.CircuitUiEvent
 import com.slack.circuit.runtime.CircuitUiState
 import com.slack.circuit.runtime.screen.Screen
@@ -7,7 +8,9 @@ import com.template.data.itunes.ITunesResult
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class SearchScreen(val initialQuery: String = "") : Screen {
+data class SearchScreen(val initialQuery: String = "") :
+    Screen,
+    Parcelable {
     sealed interface State : CircuitUiState {
         val query: String
         val eventSink: (Event) -> Unit

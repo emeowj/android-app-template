@@ -1,5 +1,6 @@
 package com.template.screens.settings
 
+import android.os.Parcelable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,7 +52,7 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data object SettingsScreen : Screen {
+data object SettingsScreen : Screen, Parcelable {
     data class State(
         val eventSink: (Event) -> Unit = {},
     ) : CircuitUiState

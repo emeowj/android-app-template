@@ -1,5 +1,6 @@
 package com.template.screens.home
 
+import android.os.Parcelable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -35,7 +36,7 @@ import dev.zacsweers.metro.AssistedInject
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data object HomeScreen : Screen {
+data object HomeScreen : Screen, Parcelable {
     data class State(val eventSink: (Event) -> Unit) : CircuitUiState
 
     sealed interface Event : CircuitUiEvent {
