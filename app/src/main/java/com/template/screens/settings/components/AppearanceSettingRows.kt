@@ -7,7 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import com.slack.circuit.overlay.LocalOverlayHost
 import com.template.R
@@ -38,7 +38,7 @@ fun ThemeSettingRow(
     var darkMode by rememberEnumPreference(DarkModeKey)
     val overlayHost = LocalOverlayHost.current
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
+    val resources = LocalResources.current
 
     val themeLabel = when (darkMode) {
         DarkMode.SYSTEM -> stringResource(R.string.settings_theme_system)
@@ -64,7 +64,7 @@ fun ThemeSettingRow(
                                 darkMode = mode
                                 navigator.finish(Unit)
                                 onShowSnackbar(
-                                    context.getString(R.string.settings_snack_theme_set, context.getString(titleRes).lowercase()),
+                                    resources.getString(R.string.settings_snack_theme_set, resources.getString(titleRes).lowercase()),
                                 )
                             },
                         )
@@ -111,7 +111,7 @@ fun TypographySettingRow(
     var typePairing by rememberEnumPreference(TypePairingKey)
     val overlayHost = LocalOverlayHost.current
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
+    val resources = LocalResources.current
 
     val typePairingLabel = when (typePairing) {
         AppTypePairing.Editorial -> stringResource(R.string.type_pairing_editorial)
@@ -137,7 +137,7 @@ fun TypographySettingRow(
                                 typePairing = pairing
                                 navigator.finish(Unit)
                                 onShowSnackbar(
-                                    context.getString(R.string.settings_snack_type_set, context.getString(labelRes).lowercase()),
+                                    resources.getString(R.string.settings_snack_type_set, resources.getString(labelRes).lowercase()),
                                 )
                             },
                         )
@@ -182,7 +182,7 @@ fun DensitySettingRow(
     var density by rememberEnumPreference(DensityKey)
     val overlayHost = LocalOverlayHost.current
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
+    val resources = LocalResources.current
 
     val densityLabel = when (density) {
         AppDensity.Compact -> stringResource(R.string.density_compact)
@@ -208,7 +208,7 @@ fun DensitySettingRow(
                                 density = d
                                 navigator.finish(Unit)
                                 onShowSnackbar(
-                                    context.getString(R.string.settings_snack_density_set, context.getString(titleRes).lowercase()),
+                                    resources.getString(R.string.settings_snack_density_set, resources.getString(titleRes).lowercase()),
                                 )
                             },
                         )
@@ -253,7 +253,8 @@ fun DynamicColorSettingRow(
     modifier: Modifier = Modifier,
 ) {
     var dynamicColor by rememberPreference(DynamicColorEnabledKey, true)
-    val context = LocalContext.current
+    val snackbarOn = stringResource(R.string.settings_snack_dynamic_color_on)
+    val snackbarOff = stringResource(R.string.settings_snack_dynamic_color_off)
 
     AppListRow(
         title = stringResource(R.string.settings_dynamic_color_title),
@@ -264,12 +265,7 @@ fun DynamicColorSettingRow(
             checked = dynamicColor,
             onCheckedChange = {
                 dynamicColor = it
-                val msg = if (it) {
-                    context.getString(R.string.settings_snack_dynamic_color_on)
-                } else {
-                    context.getString(R.string.settings_snack_dynamic_color_off)
-                }
-                onShowSnackbar(msg)
+                onShowSnackbar(if (it) snackbarOn else snackbarOff)
             },
         ),
     )

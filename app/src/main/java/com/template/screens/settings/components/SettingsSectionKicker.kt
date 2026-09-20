@@ -5,12 +5,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLocale
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
 import com.template.ui.theme.AppTheme
 import com.template.ui.theme.LocalAppDensity
 import com.template.ui.theme.Padding
-import java.util.Locale
 
 @Composable
 fun SettingsSectionKicker(
@@ -22,7 +22,7 @@ fun SettingsSectionKicker(
     val densityTokens = LocalAppDensity.current
 
     Text(
-        text = title.uppercase(Locale.getDefault()),
+        text = title.uppercase(LocalLocale.current.platformLocale),
         style = typography.overline,
         color = colors.inkMuted,
         modifier = modifier
