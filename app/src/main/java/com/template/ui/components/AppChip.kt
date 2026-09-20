@@ -1,19 +1,24 @@
 package com.template.ui.components
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.style.Style
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import androidx.compose.foundation.style.styleable
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,19 +36,6 @@ import com.template.ui.theme.AppShapes
 import com.template.ui.theme.AppTheme
 import com.template.ui.theme.appFocusRing
 
-@Immutable
-data class AppChipColors(
-    val container: Color,
-    val content: Color,
-    val border: Color,
-    val selectedContainer: Color,
-    val selectedContent: Color,
-    val selectedBorder: Color,
-    val disabledContainer: Color,
-    val disabledContent: Color,
-    val disabledBorder: Color,
-)
-
 object AppChipDefaults {
     val MinHeight: Dp = 32.dp
     val Shape: Shape = RoundedCornerShape(AppShapes.ChipRadius)
@@ -53,19 +45,13 @@ object AppChipDefaults {
     val ItemSpacing: Dp = 6.dp
 
     @Composable
-    fun colors(): AppChipColors {
+    fun contentColor(selected: Boolean, enabled: Boolean): Color {
         val colors = AppTheme.colors
-        return AppChipColors(
-            container = colors.surface,
-            content = colors.inkMuted,
-            border = colors.border,
-            selectedContainer = colors.accent12,
-            selectedContent = colors.accent,
-            selectedBorder = colors.accent,
-            disabledContainer = colors.surface,
-            disabledContent = colors.inkMuted.copy(alpha = 0.44f),
-            disabledBorder = colors.hairline,
-        )
+        return when {
+            !enabled -> colors.inkMuted.copy(alpha = 0.44f)
+            selected -> colors.accent
+            else -> colors.inkMuted
+        }
     }
 }
 
@@ -74,69 +60,62 @@ fun AppChip(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    style: Style = Style,
+    contentColor: Color? = null,
     selected: Boolean = false,
     enabled: Boolean = true,
     count: Int? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
     shape: Shape = AppChipDefaults.Shape,
-    colors: AppChipColors = AppChipDefaults.colors(),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
-    val containerColor = when {
-        !enabled -> colors.disabledContainer
-        selected -> colors.selectedContainer
-        else -> colors.container
+    val styleState = rememberUpdatedStyleState(interactionSource) {
+        it.isEnabled = enabled
+        it.isSelected = selected
     }
+    val baseStyle = if (selected) AppTheme.styles.chip.selected else AppTheme.styles.chip.filter
+    val resolvedContentColor = contentColor ?: AppChipDefaults.contentColor(selected = selected, enabled = enabled)
 
-    val contentColor = when {
-        !enabled -> colors.disabledContent
-        selected -> colors.selectedContent
-        else -> colors.content
-    }
-
-    val borderColor = when {
-        !enabled -> colors.disabledBorder
-        selected -> colors.selectedBorder
-        else -> colors.border
-    }
-
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        shape = shape,
-        color = containerColor,
-        contentColor = contentColor,
-        border = BorderStroke(AppChipDefaults.BorderWidth, borderColor),
-        interactionSource = interactionSource,
+    Box(
         modifier = modifier
             .defaultMinSize(minHeight = AppChipDefaults.MinHeight)
-            .appFocusRing(visible = false, shape = shape, ringColor = AppTheme.colors.accent),
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = AppChipDefaults.HorizontalPadding, vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(AppChipDefaults.ItemSpacing, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            leadingIcon?.invoke()
-            Text(
-                text = label,
-                style = AppTheme.typography.bodySm,
-                fontWeight = FontWeight.Medium,
-                color = contentColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+            .styleable(styleState, baseStyle, style)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                enabled = enabled,
+                onClick = onClick,
             )
-            count?.let {
+            .appFocusRing(visible = false, shape = shape, ringColor = AppTheme.colors.accent),
+        contentAlignment = Alignment.Center,
+    ) {
+        CompositionLocalProvider(LocalContentColor provides resolvedContentColor) {
+            Row(
+                modifier = Modifier.padding(horizontal = AppChipDefaults.HorizontalPadding, vertical = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(AppChipDefaults.ItemSpacing, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                leadingIcon?.invoke()
                 Text(
-                    text = it.toString(),
-                    style = AppTheme.typography.numeric,
-                    fontWeight = FontWeight.SemiBold,
-                    color = contentColor.copy(alpha = 0.70f),
+                    text = label,
+                    style = AppTheme.typography.bodySm,
+                    fontWeight = FontWeight.Medium,
+                    color = LocalContentColor.current,
                     maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
+                count?.let {
+                    Text(
+                        text = it.toString(),
+                        style = AppTheme.typography.numeric,
+                        fontWeight = FontWeight.SemiBold,
+                        color = LocalContentColor.current.copy(alpha = 0.70f),
+                        maxLines = 1,
+                    )
+                }
+                trailingIcon?.invoke()
             }
-            trailingIcon?.invoke()
         }
     }
 }

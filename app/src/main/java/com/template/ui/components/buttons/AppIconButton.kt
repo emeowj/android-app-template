@@ -1,7 +1,7 @@
 package com.template.ui.components.buttons
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,9 +9,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.style.Style
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import androidx.compose.foundation.style.styleable
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,33 +32,18 @@ import com.template.ui.theme.AppTheme
 import com.template.ui.theme.Padding
 import com.template.ui.theme.appFocusRing
 
-enum class AppIconButtonTone {
-    Default,
-    Muted,
-    Accent,
-}
-
 object AppIconButtonDefaults {
     val Size: Dp = 44.dp
     val IconSize: Dp = 21.dp
     val Shape: Shape = CircleShape
 
     @Composable
-    fun containerColor(overlay: Boolean, enabled: Boolean): Color {
+    fun contentColor(style: Style, enabled: Boolean): Color {
         val colors = AppTheme.colors
-        return when {
-            overlay -> colors.ink.copy(alpha = 0.34f)
-            else -> Color.Transparent
-        }
-    }
-
-    @Composable
-    fun contentColor(overlay: Boolean, enabled: Boolean): Color {
-        val colors = AppTheme.colors
-        return when {
-            overlay -> if (enabled) colors.surfaceFixed else colors.surfaceFixed.copy(alpha = 0.4f)
-            !enabled -> colors.inkMuted
-            else -> colors.ink
+        return when (style) {
+            AppTheme.styles.iconButton.overlay -> if (enabled) colors.surfaceFixed else colors.surfaceFixed.copy(alpha = 0.4f)
+            AppTheme.styles.iconButton.filled -> if (enabled) colors.background else colors.inkMuted
+            else -> if (enabled) colors.ink else colors.inkMuted
         }
     }
 }
@@ -62,39 +52,39 @@ object AppIconButtonDefaults {
 fun AppIconButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    overlay: Boolean = false,
+    style: Style = Style,
+    contentColor: Color? = null,
     enabled: Boolean = true,
     shape: Shape = AppIconButtonDefaults.Shape,
     content: @Composable () -> Unit,
 ) {
-    val containerColor = AppIconButtonDefaults.containerColor(overlay = overlay, enabled = enabled)
-    val contentColor = AppIconButtonDefaults.contentColor(overlay = overlay, enabled = enabled)
-    val border = if (overlay) BorderStroke(1.dp, AppTheme.colors.hairline) else null
     val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) {
+        it.isEnabled = enabled
+    }
+    val resolvedContentColor = contentColor ?: AppIconButtonDefaults.contentColor(style = style, enabled = enabled)
 
-    Surface(
-        onClick = onClick,
-        enabled = enabled,
-        shape = shape,
-        color = containerColor,
-        contentColor = contentColor,
-        border = border,
-        interactionSource = interactionSource,
+    Box(
         modifier = modifier
             .size(AppIconButtonDefaults.Size)
+            .styleable(styleState, AppTheme.styles.iconButton.standard, style)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(bounded = false, radius = AppIconButtonDefaults.Size / 2),
+                enabled = enabled,
+                onClick = onClick,
+            )
             .appFocusRing(visible = false, shape = shape, ringColor = AppTheme.colors.accent),
+        contentAlignment = Alignment.Center,
     ) {
-        Box(
-            modifier = Modifier.size(AppIconButtonDefaults.Size),
-            contentAlignment = Alignment.Center,
-        ) {
+        CompositionLocalProvider(LocalContentColor provides resolvedContentColor) {
             content()
         }
     }
 }
 
 /**
- * Convenience overload accepting drawable icon resource and legacy tone parameters.
+ * Convenience overload accepting drawable icon resource.
  */
 @Composable
 fun AppIconButton(
@@ -102,30 +92,23 @@ fun AppIconButton(
     onClick: () -> Unit,
     contentDescription: String?,
     modifier: Modifier = Modifier,
-    tone: AppIconButtonTone = AppIconButtonTone.Default,
-    overlay: Boolean = false,
+    style: Style = Style,
+    tint: Color? = null,
     enabled: Boolean = true,
     size: Dp = AppIconButtonDefaults.Size,
     iconSize: Dp = AppIconButtonDefaults.IconSize,
 ) {
-    val colors = AppTheme.colors
-    val explicitTint = when (tone) {
-        AppIconButtonTone.Default -> null
-        AppIconButtonTone.Muted -> colors.inkMuted
-        AppIconButtonTone.Accent -> colors.accent
-    }
-
     AppIconButton(
         onClick = onClick,
         modifier = modifier.size(size),
-        overlay = overlay,
+        style = style,
+        contentColor = tint,
         enabled = enabled,
     ) {
-        val tint = explicitTint ?: AppIconButtonDefaults.contentColor(overlay = overlay, enabled = enabled)
         Icon(
             painter = painterResource(iconRes),
             contentDescription = contentDescription,
-            tint = tint,
+            tint = LocalContentColor.current,
             modifier = Modifier.size(iconSize),
         )
     }
@@ -138,36 +121,36 @@ private fun AppIconButtonPreview() {
         Row(
             modifier = Modifier.padding(Padding.md),
             horizontalArrangement = Arrangement.spacedBy(Padding.sm),
-            verticalAlignment = Alignment.CenterVertically,
         ) {
             AppIconButton(
-                iconRes = R.drawable.ic_share,
+                iconRes = R.drawable.ic_search,
                 onClick = {},
-                contentDescription = "Share",
+                contentDescription = "Standard",
+                style = AppTheme.styles.iconButton.standard,
             )
             AppIconButton(
-                iconRes = R.drawable.ic_close,
+                iconRes = R.drawable.ic_search,
                 onClick = {},
-                contentDescription = "Close",
-                tone = AppIconButtonTone.Muted,
+                contentDescription = "Filled",
+                style = AppTheme.styles.iconButton.filled,
             )
             AppIconButton(
-                iconRes = R.drawable.ic_star,
+                iconRes = R.drawable.ic_search,
                 onClick = {},
-                contentDescription = "Star",
-                tone = AppIconButtonTone.Accent,
+                contentDescription = "Tonal",
+                style = AppTheme.styles.iconButton.tonal,
             )
             AppIconButton(
-                iconRes = R.drawable.ic_share,
+                iconRes = R.drawable.ic_search,
                 onClick = {},
-                contentDescription = "Overlay Share",
-                overlay = true,
+                contentDescription = "Outlined",
+                style = AppTheme.styles.iconButton.outlined,
             )
             AppIconButton(
-                iconRes = R.drawable.ic_close,
+                iconRes = R.drawable.ic_search,
                 onClick = {},
-                contentDescription = "Disabled",
-                enabled = false,
+                contentDescription = "Overlay",
+                style = AppTheme.styles.iconButton.overlay,
             )
         }
     }

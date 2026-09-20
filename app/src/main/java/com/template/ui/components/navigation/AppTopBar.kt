@@ -338,7 +338,7 @@ private fun AppTopBarImmersivePreview() {
                         onClick = {},
                         iconRes = R.drawable.ic_arrow_back,
                         contentDescription = "Back",
-                        overlay = true,
+                        style = AppTheme.styles.iconButton.overlay,
                     )
                 },
                 trailing = {
@@ -346,7 +346,7 @@ private fun AppTopBarImmersivePreview() {
                         onClick = {},
                         iconRes = R.drawable.ic_share,
                         contentDescription = "Share",
-                        overlay = true,
+                        style = AppTheme.styles.iconButton.overlay,
                     )
                 },
             )

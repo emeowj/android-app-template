@@ -12,10 +12,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.template.ui.components.buttons.AppButton
 import com.template.ui.components.buttons.AppButtonDefaults
-import com.template.ui.components.buttons.AppButtonVariant
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
 import com.template.ui.theme.AppShape
+import com.template.ui.theme.AppTheme
 import com.template.ui.theme.LocalColorRoles
 import com.template.ui.theme.Padding
 
@@ -32,16 +32,14 @@ fun AppSheetActionBar(
         AppButton(
             text = secondaryLabel,
             onClick = onSecondary,
-            variant = AppButtonVariant.Secondary,
-            shape = AppShape.input,
+            style = AppTheme.styles.button.secondary,
             modifier = Modifier.weight(0.9f),
         )
         AppButton(
             text = primaryLabel,
             onClick = onPrimary,
             enabled = primaryEnabled,
-            variant = AppButtonVariant.Primary,
-            shape = AppShape.input,
+            style = AppTheme.styles.button.primary,
             modifier = Modifier.weight(1.8f),
         )
     }
@@ -59,8 +57,7 @@ fun AppSheetActionBar(
             text = primaryLabel,
             onClick = onPrimary,
             enabled = primaryEnabled,
-            variant = AppButtonVariant.Primary,
-            shape = AppShape.input,
+            style = AppTheme.styles.button.primary,
             modifier = Modifier.weight(1f),
         )
     }

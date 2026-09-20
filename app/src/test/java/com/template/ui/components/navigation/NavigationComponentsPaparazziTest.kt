@@ -20,7 +20,6 @@ import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import com.template.R
 import com.template.ui.components.buttons.AppButton
-import com.template.ui.components.buttons.AppButtonVariant
 import com.template.ui.components.buttons.AppIconButton
 import com.template.ui.theme.AppTheme
 import org.junit.Rule
@@ -258,7 +257,7 @@ private fun TopBarImmersiveSpecimen() {
                             onClick = {},
                             iconRes = R.drawable.ic_arrow_back,
                             contentDescription = "Back",
-                            overlay = true,
+                            style = AppTheme.styles.iconButton.overlay,
                         )
                     },
                     trailing = {
@@ -266,7 +265,7 @@ private fun TopBarImmersiveSpecimen() {
                             onClick = {},
                             iconRes = R.drawable.ic_share,
                             contentDescription = "Share",
-                            overlay = true,
+                            style = AppTheme.styles.iconButton.overlay,
                         )
                     },
                 )
@@ -342,13 +341,13 @@ private fun ActionBarSpecimen() {
                 AppButton(
                     text = "Cancel",
                     onClick = {},
-                    variant = AppButtonVariant.Secondary,
+                    style = AppTheme.styles.button.secondary,
                     modifier = Modifier.weight(1f),
                 )
                 AppButton(
                     text = "Apply Wallpaper",
                     onClick = {},
-                    variant = AppButtonVariant.Primary,
+                    style = AppTheme.styles.button.primary,
                     modifier = Modifier.weight(1f),
                 )
             }

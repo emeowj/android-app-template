@@ -77,6 +77,8 @@ object AppTheme {
     val pairing: AppTypePairing
         @Composable
         get() = LocalAppTypePairing.current
+
+    val styles: ComponentStyles = ComponentStyles
 }
 
 @Composable

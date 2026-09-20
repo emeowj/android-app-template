@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.template.R
 import com.template.ui.components.buttons.AppButton
-import com.template.ui.components.buttons.AppButtonVariant
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
 import com.template.ui.theme.AppTheme
@@ -141,7 +140,7 @@ private fun AppDoneConfirmationPreview() {
                     AppButton(
                         text = "View Collection",
                         onClick = {},
-                        variant = AppButtonVariant.Secondary,
+                        style = AppTheme.styles.button.secondary,
                     )
                 },
             )

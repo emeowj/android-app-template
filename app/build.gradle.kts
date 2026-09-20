@@ -76,6 +76,7 @@ kotlin {
         jvmTarget.set(JvmTarget.JVM_21)
         optIn.addAll(
             listOf(
+                "androidx.compose.foundation.style.ExperimentalFoundationStyleApi",
                 "androidx.compose.material3.ExperimentalMaterial3Api",
                 "androidx.compose.material3.ExperimentalMaterial3ExpressiveApi",
                 "androidx.compose.ui.text.ExperimentalTextApi",
@@ -100,6 +101,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)

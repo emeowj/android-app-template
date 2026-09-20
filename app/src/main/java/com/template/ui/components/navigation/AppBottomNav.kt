@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -161,8 +163,8 @@ fun RowScope.AppBottomNavItem(
                 .background(color = containerColor, shape = CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            androidx.compose.runtime.CompositionLocalProvider(
-                androidx.compose.material3.LocalContentColor provides contentColor,
+            CompositionLocalProvider(
+                LocalContentColor provides contentColor,
             ) {
                 icon()
             }

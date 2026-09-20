@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.style.Style
+import androidx.compose.foundation.style.styleable
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
@@ -48,6 +50,7 @@ object AppFloatingPillDefaults {
 fun AppFloatingPill(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    style: Style = Style,
     iconOnly: Boolean = false,
     text: String = "Show controls",
     @DrawableRes iconRes: Int? = null,
@@ -86,7 +89,7 @@ fun AppFloatingPill(
     Box(
         modifier = modifier
             .overlaySurfaceShadow(shape = shape)
-            .background(color = colors.surface, shape = shape)
+            .styleable(null, AppTheme.styles.navigation.floatingPill, style)
             .appFocusRing(visible = false, shape = shape)
             .then(contentModifier),
         contentAlignment = Alignment.Center,

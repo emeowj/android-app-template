@@ -36,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.template.ui.components.buttons.AppButton
-import com.template.ui.components.buttons.AppButtonVariant
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
 import com.template.ui.theme.AppShapes
@@ -114,13 +113,13 @@ fun AppDialogActions(
                 AppButton(
                     text = dismissText,
                     onClick = onDismiss,
-                    variant = AppButtonVariant.Text,
+                    style = AppTheme.styles.button.text,
                 )
             }
             AppButton(
                 text = confirmText,
                 onClick = onConfirm,
-                variant = if (isDestructive) AppButtonVariant.TextDanger else AppButtonVariant.Text,
+                style = if (isDestructive) AppTheme.styles.button.textDanger else AppTheme.styles.button.text,
             )
         }
     }

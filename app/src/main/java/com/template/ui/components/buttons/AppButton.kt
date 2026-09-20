@@ -1,25 +1,27 @@
 package com.template.ui.components.buttons
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.style.Style
+import androidx.compose.foundation.style.rememberUpdatedStyleState
+import androidx.compose.foundation.style.styleable
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,23 +38,6 @@ import com.template.ui.theme.AppTheme
 import com.template.ui.theme.Padding
 import com.template.ui.theme.appFocusRing
 
-enum class AppButtonVariant {
-    Primary,
-    Secondary,
-    Text,
-    TextDanger,
-}
-
-@Immutable
-data class AppButtonColors(
-    val container: Color,
-    val content: Color,
-    val border: Color? = null,
-    val disabledContainer: Color = Color.Transparent,
-    val disabledContent: Color,
-    val disabledBorder: Color? = null,
-)
-
 object AppButtonDefaults {
     val Height: Dp = 56.dp
     val TextButtonHeight: Dp = 44.dp
@@ -62,41 +47,13 @@ object AppButtonDefaults {
     val TextButtonHorizontalPadding: Dp = 12.dp
 
     @Composable
-    fun colors(variant: AppButtonVariant): AppButtonColors {
+    fun contentColor(style: Style, enabled: Boolean): Color {
         val colors = AppTheme.colors
-        return when (variant) {
-            AppButtonVariant.Primary -> AppButtonColors(
-                container = colors.ink,
-                content = colors.background,
-                border = null,
-                disabledContainer = colors.ink14,
-                disabledContent = colors.inkMuted,
-            )
-
-            AppButtonVariant.Secondary -> AppButtonColors(
-                container = colors.surface,
-                content = colors.ink,
-                border = colors.border,
-                disabledContainer = colors.surface,
-                disabledContent = colors.inkMuted,
-                disabledBorder = colors.hairline,
-            )
-
-            AppButtonVariant.Text -> AppButtonColors(
-                container = Color.Transparent,
-                content = colors.ink,
-                border = null,
-                disabledContainer = Color.Transparent,
-                disabledContent = colors.inkMuted,
-            )
-
-            AppButtonVariant.TextDanger -> AppButtonColors(
-                container = Color.Transparent,
-                content = colors.danger,
-                border = null,
-                disabledContainer = Color.Transparent,
-                disabledContent = colors.danger.copy(alpha = 0.4f),
-            )
+        return when (style) {
+            AppTheme.styles.button.secondary -> if (enabled) colors.ink else colors.inkMuted
+            AppTheme.styles.button.text -> if (enabled) colors.ink else colors.inkMuted
+            AppTheme.styles.button.textDanger -> if (enabled) colors.danger else colors.danger.copy(alpha = 0.4f)
+            else -> if (enabled) colors.background else colors.inkMuted
         }
     }
 }
@@ -106,106 +63,100 @@ fun AppButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    variant: AppButtonVariant = AppButtonVariant.Primary,
+    style: Style = Style,
+    contentColor: Color? = null,
     leadingIcon: (@Composable () -> Unit)? = null,
     trailingIcon: (@Composable () -> Unit)? = null,
     block: Boolean = false,
     enabled: Boolean = true,
     isLoading: Boolean = false,
-    shape: Shape = AppButtonDefaults.Shape,
-    colors: AppButtonColors = AppButtonDefaults.colors(variant),
 ) {
     val effectivelyEnabled = enabled && !isLoading
-    val container = if (effectivelyEnabled) colors.container else colors.disabledContainer
-    val content = if (effectivelyEnabled) colors.content else colors.disabledContent
-    val borderColor = if (effectivelyEnabled) colors.border else colors.disabledBorder
-    val border = borderColor?.let { BorderStroke(1.dp, it) }
-
-    val height = when (variant) {
-        AppButtonVariant.Primary, AppButtonVariant.Secondary -> AppButtonDefaults.Height
-        AppButtonVariant.Text, AppButtonVariant.TextDanger -> AppButtonDefaults.TextButtonHeight
-    }
-
-    val horizontalPadding = when (variant) {
-        AppButtonVariant.Primary, AppButtonVariant.Secondary -> AppButtonDefaults.HorizontalPadding
-        AppButtonVariant.Text, AppButtonVariant.TextDanger -> AppButtonDefaults.TextButtonHorizontalPadding
-    }
-
     val interactionSource = remember { MutableInteractionSource() }
+    val styleState = rememberUpdatedStyleState(interactionSource) {
+        it.isEnabled = effectivelyEnabled
+    }
+    val resolvedContentColor = contentColor ?: AppButtonDefaults.contentColor(style = style, enabled = effectivelyEnabled)
+    val isTextButton = style == AppTheme.styles.button.text || style == AppTheme.styles.button.textDanger
+    val horizontalPadding = if (isTextButton) {
+        AppButtonDefaults.TextButtonHorizontalPadding
+    } else {
+        AppButtonDefaults.HorizontalPadding
+    }
 
-    Surface(
-        onClick = onClick,
-        enabled = effectivelyEnabled,
-        shape = shape,
-        color = container,
-        contentColor = content,
-        border = border,
-        interactionSource = interactionSource,
+    Box(
         modifier = modifier
-            .height(height)
             .then(if (block) Modifier.fillMaxWidth() else Modifier.wrapContentWidth())
-            .appFocusRing(visible = false, shape = shape, ringColor = AppTheme.colors.accent),
+            .styleable(styleState, AppTheme.styles.button.primary, style)
+            .clickable(
+                interactionSource = interactionSource,
+                indication = ripple(),
+                enabled = effectivelyEnabled,
+                onClick = onClick,
+            )
+            .appFocusRing(visible = false, shape = AppButtonDefaults.Shape, ringColor = AppTheme.colors.accent),
+        contentAlignment = Alignment.Center,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxHeight()
-                .then(if (block) Modifier.fillMaxWidth() else Modifier.wrapContentWidth())
-                .padding(horizontal = horizontalPadding),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (isLoading) {
-                CircularProgressIndicator(
-                    color = content,
-                    strokeWidth = 2.dp,
-                    modifier = Modifier.size(AppButtonDefaults.IconSize),
-                )
-            } else {
-                leadingIcon?.invoke()
-                Text(
-                    text = text,
-                    style = AppTheme.typography.bodyLg,
-                    fontWeight = FontWeight.Medium,
-                    color = content,
-                    maxLines = 1,
-                )
-                trailingIcon?.invoke()
+        CompositionLocalProvider(LocalContentColor provides resolvedContentColor) {
+            Row(
+                modifier = Modifier
+                    .then(if (block) Modifier.fillMaxWidth() else Modifier.wrapContentWidth())
+                    .padding(horizontal = horizontalPadding),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        color = LocalContentColor.current,
+                        strokeWidth = 2.dp,
+                        modifier = Modifier.size(AppButtonDefaults.IconSize),
+                    )
+                } else {
+                    leadingIcon?.invoke()
+                    Text(
+                        text = text,
+                        style = AppTheme.typography.bodyLg,
+                        fontWeight = FontWeight.Medium,
+                        color = LocalContentColor.current,
+                        maxLines = 1,
+                    )
+                    trailingIcon?.invoke()
+                }
             }
         }
     }
 }
 
 /**
- * Convenience overload accepting drawable icon resource and optional label alias for backward compatibility.
+ * Convenience overload accepting drawable icon resource and optional label alias.
  */
 @Composable
 fun AppButton(
     label: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    variant: AppButtonVariant = AppButtonVariant.Primary,
+    style: Style = Style,
+    contentColor: Color? = null,
     enabled: Boolean = true,
     isLoading: Boolean = false,
     @DrawableRes iconRes: Int? = null,
-    colors: AppButtonColors = AppButtonDefaults.colors(variant),
-    shape: Shape = AppButtonDefaults.Shape,
     block: Boolean = false,
 ) {
     AppButton(
         text = label,
         onClick = onClick,
         modifier = modifier,
-        variant = variant,
+        style = style,
+        contentColor = contentColor,
         enabled = enabled,
         isLoading = isLoading,
-        shape = shape,
-        colors = colors,
         block = block,
         leadingIcon = iconRes?.let { res ->
             {
                 Icon(
                     painter = painterResource(res),
                     contentDescription = null,
+                    tint = LocalContentColor.current,
                     modifier = Modifier.size(AppButtonDefaults.IconSize),
                 )
             }
@@ -217,14 +168,14 @@ fun AppButton(
 @Composable
 private fun AppButtonPreview() {
     AppPreview {
-        androidx.compose.foundation.layout.Column(
+        Column(
             modifier = Modifier.padding(Padding.md),
             verticalArrangement = Arrangement.spacedBy(Padding.sm),
         ) {
             AppButton(text = "Primary Button", onClick = {})
-            AppButton(text = "Secondary Button", onClick = {}, variant = AppButtonVariant.Secondary)
-            AppButton(text = "Text Button", onClick = {}, variant = AppButtonVariant.Text)
-            AppButton(text = "Text Danger Button", onClick = {}, variant = AppButtonVariant.TextDanger)
+            AppButton(text = "Secondary Button", onClick = {}, style = AppTheme.styles.button.secondary)
+            AppButton(text = "Text Button", onClick = {}, style = AppTheme.styles.button.text)
+            AppButton(text = "Text Danger Button", onClick = {}, style = AppTheme.styles.button.textDanger)
             AppButton(text = "Disabled Primary", onClick = {}, enabled = false)
             AppButton(text = "Loading State", onClick = {}, isLoading = true)
         }

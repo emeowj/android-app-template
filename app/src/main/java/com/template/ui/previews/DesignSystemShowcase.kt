@@ -1,6 +1,7 @@
 package com.template.ui.previews
 
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.horizontalScroll
@@ -50,7 +51,6 @@ import com.template.ui.components.AppSegmentedControl
 import com.template.ui.components.AppSegmentedControlOption
 import com.template.ui.components.buttons.AppAffordance
 import com.template.ui.components.buttons.AppButton
-import com.template.ui.components.buttons.AppButtonVariant
 import com.template.ui.components.buttons.AppIconButton
 import com.template.ui.components.color.AppColorField
 import com.template.ui.components.color.AppColorPopoverCard
@@ -236,7 +236,7 @@ private fun ShowcaseToolbar(
     val colors = AppTheme.colors
     Surface(
         color = colors.surface.copy(alpha = 0.96f),
-        border = androidx.compose.foundation.BorderStroke(1.dp, colors.hairline),
+        border = BorderStroke(1.dp, colors.hairline),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Column(
@@ -423,13 +423,13 @@ fun ActionsSectionContent() {
                     AppButton(
                         text = "Primary action",
                         onClick = {},
-                        variant = AppButtonVariant.Primary,
+                        style = AppTheme.styles.button.primary,
                         modifier = Modifier.weight(1f),
                     )
                     AppButton(
                         text = "Disabled",
                         onClick = {},
-                        variant = AppButtonVariant.Primary,
+                        style = AppTheme.styles.button.primary,
                         enabled = false,
                         modifier = Modifier.weight(1f),
                     )
@@ -442,18 +442,18 @@ fun ActionsSectionContent() {
                     AppButton(
                         text = "Secondary",
                         onClick = {},
-                        variant = AppButtonVariant.Secondary,
+                        style = AppTheme.styles.button.secondary,
                         modifier = Modifier.weight(1f),
                     )
                     AppButton(
                         text = "Text",
                         onClick = {},
-                        variant = AppButtonVariant.Text,
+                        style = AppTheme.styles.button.text,
                     )
                     AppButton(
                         text = "Delete",
                         onClick = {},
-                        variant = AppButtonVariant.TextDanger,
+                        style = AppTheme.styles.button.textDanger,
                     )
                 }
             }
@@ -477,7 +477,7 @@ fun ActionsSectionContent() {
                         .background(SampleGradientBrush)
                         .padding(8.dp),
                 ) {
-                    AppIconButton(onClick = {}, overlay = true, iconRes = R.drawable.ic_arrow_back, contentDescription = "Back overlay")
+                    AppIconButton(onClick = {}, style = AppTheme.styles.iconButton.overlay, iconRes = R.drawable.ic_arrow_back, contentDescription = "Back overlay")
                 }
             }
         }
@@ -776,13 +776,13 @@ fun NavigationStructureSectionContent() {
                         AppButton(
                             text = "Cancel",
                             onClick = {},
-                            variant = AppButtonVariant.Secondary,
+                            style = AppTheme.styles.button.secondary,
                             modifier = Modifier.weight(1f),
                         )
                         AppButton(
                             text = "Save changes",
                             onClick = {},
-                            variant = AppButtonVariant.Primary,
+                            style = AppTheme.styles.button.primary,
                             modifier = Modifier.weight(1f),
                         )
                     }
@@ -842,7 +842,7 @@ fun CardsSectionContent() {
                 AppButton(
                     text = "Open menu",
                     onClick = { menuExpanded = true },
-                    variant = AppButtonVariant.Secondary,
+                    style = AppTheme.styles.button.secondary,
                 )
                 AppDropdownMenu(
                     expanded = menuExpanded,
@@ -909,15 +909,15 @@ fun OverlaysFeedbackSectionContent() {
             Surface(
                 shape = RoundedCornerShape(AppShapes.DialogRadius),
                 color = AppTheme.colors.surface,
-                border = androidx.compose.foundation.BorderStroke(1.dp, AppTheme.colors.hairline),
+                border = BorderStroke(1.dp, AppTheme.colors.hairline),
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 AppDialogContent(
                     title = "Confirm action?",
                     description = "Are you sure you want to proceed with this action?",
                     actions = {
-                        AppButton(text = "Cancel", onClick = {}, variant = AppButtonVariant.Text)
-                        AppButton(text = "Confirm", onClick = {}, variant = AppButtonVariant.Primary)
+                        AppButton(text = "Cancel", onClick = {}, style = AppTheme.styles.button.text)
+                        AppButton(text = "Confirm", onClick = {}, style = AppTheme.styles.button.primary)
                     },
                 )
             }

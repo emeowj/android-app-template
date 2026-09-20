@@ -11,9 +11,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.template.R
 import com.template.ui.components.buttons.AppIconButton
-import com.template.ui.components.buttons.AppIconButtonTone
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
+import com.template.ui.theme.AppTheme
 import com.template.ui.theme.Padding
 
 @Composable
@@ -52,7 +52,7 @@ fun AppSearchField(
                         iconRes = R.drawable.ic_close,
                         onClick = onClear,
                         contentDescription = clearContentDescription,
-                        tone = AppIconButtonTone.Muted,
+                        tint = AppTheme.colors.inkMuted,
                     )
                 }
             } else {

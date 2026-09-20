@@ -21,7 +21,6 @@ import app.cash.paparazzi.DeviceConfig.Companion.PIXEL_5
 import app.cash.paparazzi.Paparazzi
 import com.android.ide.common.rendering.api.SessionParams
 import com.template.ui.components.buttons.AppButton
-import com.template.ui.components.buttons.AppButtonVariant
 import com.template.ui.theme.AppTheme
 import org.junit.Rule
 import org.junit.Test
@@ -217,7 +216,7 @@ private fun EmptyStateSpecimen() {
                     AppButton(
                         text = "Reset Filters",
                         onClick = {},
-                        variant = AppButtonVariant.Secondary,
+                        style = AppTheme.styles.button.secondary,
                     )
                 },
             )
@@ -320,7 +319,7 @@ private fun DoneConfirmationSpecimen() {
                     AppButton(
                         text = "Done",
                         onClick = {},
-                        variant = AppButtonVariant.Secondary,
+                        style = AppTheme.styles.button.secondary,
                     )
                 },
             )

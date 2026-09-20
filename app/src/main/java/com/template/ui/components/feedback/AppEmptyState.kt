@@ -24,7 +24,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.template.ui.components.buttons.AppButton
-import com.template.ui.components.buttons.AppButtonVariant
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
 import com.template.ui.theme.AppShapes
@@ -139,7 +138,7 @@ private fun AppEmptyStatePreview() {
                     AppButton(
                         text = "Browse Wallpapers",
                         onClick = {},
-                        variant = AppButtonVariant.Secondary,
+                        style = AppTheme.styles.button.secondary,
                     )
                 },
             )

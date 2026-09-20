@@ -131,14 +131,14 @@ private fun ButtonVariantsSpecimen() {
             AppButton(
                 text = "Primary Action",
                 onClick = {},
-                variant = AppButtonVariant.Primary,
+                style = AppTheme.styles.button.primary,
                 block = true,
             )
 
             AppButton(
                 text = "Secondary Action",
                 onClick = {},
-                variant = AppButtonVariant.Secondary,
+                style = AppTheme.styles.button.secondary,
                 block = true,
             )
 
@@ -149,12 +149,12 @@ private fun ButtonVariantsSpecimen() {
                 AppButton(
                     text = "Text Button",
                     onClick = {},
-                    variant = AppButtonVariant.Text,
+                    style = AppTheme.styles.button.text,
                 )
                 AppButton(
                     text = "Destructive",
                     onClick = {},
-                    variant = AppButtonVariant.TextDanger,
+                    style = AppTheme.styles.button.textDanger,
                 )
             }
         }
@@ -183,7 +183,7 @@ private fun ButtonStatesSpecimen() {
             AppButton(
                 text = "With Leading Icon",
                 onClick = {},
-                variant = AppButtonVariant.Primary,
+                style = AppTheme.styles.button.primary,
                 leadingIcon = {
                     Icon(
                         painter = painterResource(R.drawable.ic_auto_awesome),
@@ -197,7 +197,7 @@ private fun ButtonStatesSpecimen() {
             AppButton(
                 text = "With Trailing Chevron",
                 onClick = {},
-                variant = AppButtonVariant.Secondary,
+                style = AppTheme.styles.button.secondary,
                 trailingIcon = {
                     Icon(
                         painter = painterResource(R.drawable.ic_chevron_right),
@@ -211,7 +211,7 @@ private fun ButtonStatesSpecimen() {
             AppButton(
                 text = "Loading Button",
                 onClick = {},
-                variant = AppButtonVariant.Primary,
+                style = AppTheme.styles.button.primary,
                 isLoading = true,
                 block = true,
             )
@@ -219,7 +219,7 @@ private fun ButtonStatesSpecimen() {
             AppButton(
                 text = "Disabled Primary",
                 onClick = {},
-                variant = AppButtonVariant.Primary,
+                style = AppTheme.styles.button.primary,
                 enabled = false,
                 block = true,
             )
@@ -227,7 +227,7 @@ private fun ButtonStatesSpecimen() {
             AppButton(
                 text = "Disabled Secondary",
                 onClick = {},
-                variant = AppButtonVariant.Secondary,
+                style = AppTheme.styles.button.secondary,
                 enabled = false,
                 block = true,
             )
@@ -268,19 +268,18 @@ private fun IconButtonSpecimen() {
                     iconRes = R.drawable.ic_share,
                     onClick = {},
                     contentDescription = "Share",
-                    tone = AppIconButtonTone.Default,
                 )
                 AppIconButton(
                     iconRes = R.drawable.ic_close,
                     onClick = {},
                     contentDescription = "Close",
-                    tone = AppIconButtonTone.Muted,
+                    tint = colors.inkMuted,
                 )
                 AppIconButton(
                     iconRes = R.drawable.ic_star,
                     onClick = {},
                     contentDescription = "Favorite",
-                    tone = AppIconButtonTone.Accent,
+                    tint = colors.accent,
                 )
                 AppIconButton(
                     iconRes = R.drawable.ic_share,
@@ -313,25 +312,25 @@ private fun IconButtonSpecimen() {
                         iconRes = R.drawable.ic_arrow_back,
                         onClick = {},
                         contentDescription = "Back",
-                        overlay = true,
+                        style = AppTheme.styles.iconButton.overlay,
                     )
                     AppIconButton(
                         iconRes = R.drawable.ic_share,
                         onClick = {},
                         contentDescription = "Share",
-                        overlay = true,
+                        style = AppTheme.styles.iconButton.overlay,
                     )
                     AppIconButton(
                         iconRes = R.drawable.ic_star,
                         onClick = {},
                         contentDescription = "Star",
-                        overlay = true,
+                        style = AppTheme.styles.iconButton.overlay,
                     )
                     AppIconButton(
                         iconRes = R.drawable.ic_close,
                         onClick = {},
                         contentDescription = "Disabled Overlay",
-                        overlay = true,
+                        style = AppTheme.styles.iconButton.overlay,
                         enabled = false,
                     )
                 }

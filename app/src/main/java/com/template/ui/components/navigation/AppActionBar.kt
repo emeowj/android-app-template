@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.template.ui.components.buttons.AppButton
-import com.template.ui.components.buttons.AppButtonVariant
 import com.template.ui.previews.AppPreview
 import com.template.ui.previews.ThemePreviews
 import com.template.ui.theme.AppTheme
@@ -77,13 +76,13 @@ private fun AppActionBarDualPreview() {
             AppButton(
                 text = "Cancel",
                 onClick = {},
-                variant = AppButtonVariant.Secondary,
+                style = AppTheme.styles.button.secondary,
                 modifier = Modifier.weight(1f),
             )
             AppButton(
                 text = "Apply Wallpaper",
                 onClick = {},
-                variant = AppButtonVariant.Primary,
+                style = AppTheme.styles.button.primary,
                 modifier = Modifier.weight(1f),
             )
         }
@@ -98,7 +97,7 @@ private fun AppActionBarSinglePreview() {
             AppButton(
                 text = "Save Changes",
                 onClick = {},
-                variant = AppButtonVariant.Primary,
+                style = AppTheme.styles.button.primary,
                 modifier = Modifier.weight(1f),
             )
         }
